@@ -1,0 +1,5 @@
+# Node.jsの依存関係
+node_modules/
+
+# Python仮想環境
+.venv/
