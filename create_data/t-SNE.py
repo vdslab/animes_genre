@@ -51,8 +51,11 @@ df = pd.DataFrame({
 for i in range(len(reduced_data)):
     filedata.append({
         "animename":datas[i]["name"],
+        "coverImage":datas[i]["coverImage"],
         "x": float(reduced_data[i, 0]),
-        "y": float(reduced_data[i, 1])
+        "y": float(reduced_data[i, 1]),
+        "year": datas[i]["year"],
+        "n": datas[i]["n"]
     })
 
 # 座標をJSONファイルに保存

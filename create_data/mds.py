@@ -49,8 +49,11 @@ random_sizes = np.random.randint(50, 500, size=len(data))  # 50〜500のラン�
 for i in range(len(reduced_data_mds)):
     filedata.append(
         {"animename":datas[i]["name"],
+         "coverImage":datas[i]["coverImage"],
          "x":float(reduced_data_mds[i, 0]),
-         "y":float(reduced_data_mds[i, 1])
+         "y":float(reduced_data_mds[i, 1]),
+         "year": datas[i]["year"],
+         "n": datas[i]["n"]
          })
 
 with open('./data/node.json', 'w', encoding='utf-8') as f:
