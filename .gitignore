@@ -3,3 +3,5 @@ node_modules/
 
 # Python仮想環境
 .venv/
+
+collect_data
