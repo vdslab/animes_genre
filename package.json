@@ -1,0 +1,47 @@
+{
+  "name": "animes_genre",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "browserslist": "^4.24.2",
+    "caniuse-lite": "^1.0.30001687",
+    "convert-source-map": "^2.0.0",
+    "debug": "^4.4.0",
+    "electron-to-chromium": "^1.5.71",
+    "esbuild": "^0.24.0",
+    "escalade": "^3.2.0",
+    "gensync": "^1.0.0-beta.2",
+    "globals": "^11.12.0",
+    "js-tokens": "^4.0.0",
+    "jsesc": "^3.0.2",
+    "json5": "^2.2.3",
+    "lru-cache": "^5.1.1",
+    "ms": "^2.1.3",
+    "nanoid": "^3.3.8",
+    "node-releases": "^2.0.18",
+    "picocolors": "^1.1.1",
+    "postcss": "^8.4.49",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-refresh": "^0.14.2",
+    "rollup": "^4.28.1",
+    "scheduler": "^0.25.0",
+    "semver": "^6.3.1",
+    "source-map-js": "^1.2.1",
+    "update-browserslist-db": "^1.1.1",
+    "yallist": "^3.1.1"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.3"
+  }
+}
