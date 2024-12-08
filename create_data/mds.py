@@ -53,7 +53,8 @@ for i in range(len(reduced_data_mds)):
          "x":float(reduced_data_mds[i, 0]),
          "y":float(reduced_data_mds[i, 1]),
          "year": datas[i]["year"],
-         "n": datas[i]["n"]
+         "n": datas[i]["n"],
+         "color":"blue"
          })
 
 with open('./data/node.json', 'w', encoding='utf-8') as f:

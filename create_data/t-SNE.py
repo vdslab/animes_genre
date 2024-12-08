@@ -55,7 +55,8 @@ for i in range(len(reduced_data)):
         "x": float(reduced_data[i, 0]),
         "y": float(reduced_data[i, 1]),
         "year": datas[i]["year"],
-        "n": datas[i]["n"]
+        "n": datas[i]["n"],
+        "color":"blue"
     })
 
 # 座標をJSONファイルに保存

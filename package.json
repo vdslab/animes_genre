@@ -6,6 +6,7 @@
     "browserslist": "^4.24.2",
     "caniuse-lite": "^1.0.30001687",
     "convert-source-map": "^2.0.0",
+    "d3": "^7.9.0",
     "debug": "^4.4.0",
     "electron-to-chromium": "^1.5.71",
     "esbuild": "^0.24.0",
