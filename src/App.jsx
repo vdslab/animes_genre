@@ -67,6 +67,7 @@ function App() {
           [1000, 1000],
         ]) // パン可能な範囲
         .on("zoom", (event) => {
+          console.log(event.transform);
           setZoomscale(event.transform);
           svg.select("g").attr("transform", event.transform); // ズームとパンの変換を適用
         });
@@ -76,49 +77,74 @@ function App() {
   }, [pagestatus]); // pagestatus が true になったときにズームを設定
 
   return pagestatus ? (
-    <svg
-      ref={svgRef}
-      width="1000"
-      height="1000"
-      style={{ top: 20, right: 30, bottom: 30, left: 40 }}
-    >
-      <g>
-        {/* ノードを描画 */}
-        {nodedata.map((node, index) => {
-          if (zoomscale.k < 3) {
-            return (
-              <ellipse
-                key={index}
-                cx={scales.xScale(node.x)}
-                cy={scales.yScale(node.y)}
-                rx="5"
-                ry="5"
-                fill={node.color}
-                onClick={() => {
-                  console.log(node.animename);
-                }}
-                style={{ cursor: "pointer" }}
-              ></ellipse>
-            );
-          } else {
-            return (
-              <image
-                key={index}
-                x={scales.xScale(node.x) - 5} // イメージを中央に配置
-                y={scales.yScale(node.y) - 5} // イメージを中央に配置
-                width="10" // サイズ調整
-                height="10" // サイズ調整
-                href={node.coverImage}
-                onClick={() => {
-                  console.log(node.animename);
-                }}
-                style={{ cursor: "pointer" }}
-              />
-            );
-          }
-        })}
-      </g>
-    </svg>
+    <div>
+      <svg
+        ref={svgRef}
+        width="1000"
+        height="1000"
+        style={{ top: 20, right: 30, bottom: 30, left: 40 }}
+      >
+        <g>
+          {/* ノードを描画 */}
+          {nodedata.map((node, index) => {
+            if (zoomscale.k < 3) {
+              return (
+                <ellipse
+                  key={index}
+                  cx={scales.xScale(node.x)}
+                  cy={scales.yScale(node.y)}
+                  rx="10"
+                  ry="10"
+                  fill={node.color}
+                  onClick={() => {
+                    console.log(node.animename);
+                  }}
+                  style={{ cursor: "pointer" }}
+                ></ellipse>
+              );
+            } else {
+              return (
+                <image
+                  key={index}
+                  x={scales.xScale(node.x) - 5} // イメージを中央に配置
+                  y={scales.yScale(node.y) - 5} // イメージを中央に配置
+                  width="10" // サイズ調整
+                  height="10" // サイズ調整
+                  href={node.coverImage}
+                  onClick={() => {
+                    console.log(node.animename);
+                  }}
+                  style={{ cursor: "pointer" }}
+                />
+              );
+            }
+          })}
+        </g>
+      </svg>
+      <div>
+        <svg width="500" height="500">
+          <g>
+            {/* ノードを描画 */}
+            {nodedata.map((node, index) => {
+              return (
+                <ellipse
+                  key={index}
+                  cx={scales.xScale(node.x) / 2}
+                  cy={scales.yScale(node.y) / 2}
+                  rx="5"
+                  ry="5"
+                  fill={node.color}
+                  onClick={() => {
+                    console.log(node.animename);
+                  }}
+                  style={{ cursor: "pointer" }}
+                ></ellipse>
+              );
+            })}
+          </g>
+        </svg>
+      </div>
+    </div>
   ) : (
     <div>読み込み中...</div>
   );
