@@ -144,7 +144,6 @@ function App() {
                     onClick={() => {
                       console.log(node.animename);
                     }}
-                    style={{ cursor: "pointer" }}
                   ></ellipse>
                 );
               })}
