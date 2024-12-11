@@ -79,11 +79,11 @@ function App() {
       .call(zoomRef.current.transform, transform);
   };
 
-  // **ズーム機能の初期化**
   useEffect(() => {
     if (pagestatus) {
       const svg = d3.select(svgRef.current);
 
+      // D3のズームインスタンスを作成してzoomRefに保存
       const zoom = d3
         .zoom()
         .scaleExtent([1, 10]) // ズーム倍率の範囲
@@ -92,14 +92,14 @@ function App() {
           [1000, 1000],
         ]) // パン可能な範囲
         .on("zoom", (event) => {
-          console.log(event.transform);
           setZoomscale(event.transform);
           svg.select("g").attr("transform", event.transform); // ズームとパンの変換を適用
         });
 
       svg.call(zoom); // SVG にズーム機能を適用
+      zoomRef.current = zoom; // zoom インスタンスを ref に保存
     }
-  }, [pagestatus]); // pagestatus が true になったときにズームを設定
+  }, [pagestatus]);
 
   return pagestatus ? (
     <div className="container">
