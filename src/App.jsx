@@ -113,37 +113,37 @@ function App() {
           <g>
             {/* ノードを描画 */}
             {nodedata.map((node, index) => {
-              // if (zoomscale.k < 3) {
-              return (
-                <ellipse
-                  key={index}
-                  cx={scales.xScale(node.x)}
-                  cy={scales.yScale(node.y)}
-                  rx="10"
-                  ry="10"
-                  fill={node.color}
-                  onClick={() => {
-                    console.log(node.animename);
-                  }}
-                  style={{ cursor: "pointer" }}
-                ></ellipse>
-              );
-              // } else {
-              //   return (
-              //     <image
-              //       key={index}
-              //       x={scales.xScale(node.x) - 10} // イメージを中央に配置
-              //       y={scales.yScale(node.y) - 10} // イメージを中央に配置
-              //       width="10" // サイズ調整
-              //       height="10" // サイズ調整
-              //       href={node.coverImage}
-              //       onClick={() => {
-              //         console.log(node.animename);
-              //       }}
-              //       style={{ cursor: "pointer" }}
-              //     />
-              //   );
-              // }
+              if (zoomscale.k < 3) {
+                return (
+                  <ellipse
+                    key={index}
+                    cx={scales.xScale(node.x)}
+                    cy={scales.yScale(node.y)}
+                    rx="10"
+                    ry="10"
+                    fill={node.color}
+                    onClick={() => {
+                      console.log(node.animename);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  ></ellipse>
+                );
+              } else {
+                return (
+                  <image
+                    key={index}
+                    x={scales.xScale(node.x) - 10} // イメージを中央に配置
+                    y={scales.yScale(node.y) - 10} // イメージを中央に配置
+                    width="10" // サイズ調整
+                    height="10" // サイズ調整
+                    href={node.coverImage}
+                    onClick={() => {
+                      console.log(node.animename);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  />
+                );
+              }
             })}
           </g>
         </svg>
