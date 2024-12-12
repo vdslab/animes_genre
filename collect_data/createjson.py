@@ -12,7 +12,7 @@ CURRENT_API_INDEX = 0  # 現在使用中のAPIキーのインデックス
 SEARCH_URL = 'https://www.googleapis.com/youtube/v3/search'
 VIDEO_URL = 'https://www.googleapis.com/youtube/v3/videos'
 
-STATE_FILE = 'c:/Users/lotus/YouTubeAPI/animes_genre/data/video.json'  # 状態管理用ファイル
+STATE_FILE = './data/video.json'  # 状態管理用ファイル
 
 
 def switch_api_key():
@@ -25,7 +25,7 @@ def switch_api_key():
     print(f"APIキーを切り替えました。新しいキーのインデックス: {CURRENT_API_INDEX}")
 
 
-def get_anime_name(filepath='c:/Users/lotus/YouTubeAPI/animes_genre/data/animes.json'):
+def get_anime_name(filepath='./data/animes.json'):
     """アニメ名を JSON ファイルから取得"""
     with open(filepath, 'r', encoding='utf-8') as f:
         return json.load(f)
