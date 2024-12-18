@@ -1,31 +1,38 @@
-name: Run script at specified time
+name: Update YouTube and Steam Data
 
 on:
   schedule:
-    # 毎日午後2時（UTC）に実行
-    - cron: '0 14 * * *'
-
-  # 手動での実行も可能にする（オプション）
-  workflow_dispatch:
+    - cron: "0 13 * * *" # 毎日13:00に実行
+  workflow_dispatch: # 手動での実行も可能
 
 jobs:
-  run-script:
-    runs-on: ubuntu-latest  # 実行するOSの選択
+  update_data:
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Check out the repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'  # 使用するPythonのバージョンを指定
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt  # 必要なパッケージをインストール
+      - name: Install dependencies for YouTube scraping
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests tqdm janome scikit-learn numpy psycopg2-binary python-dotenv
 
-    - name: Run the script
-      run: |
-        python c:/Users/lotus/YouTubeAPI/animes_genre/collect_data/createjson.py  # 実行するスクリプトのパス
+      - name: Install dependencies for Steam scraping
+        run: |
+          pip install requests tqdm psycopg2-binary python-dotenv
+
+      # YouTube動画情報取得処理
+      - name: Run YouTube data scraping
+        run: python createjson.py
+        env:
+          API_KEY: ${{ secrets.YOUTUBE_API_KEY }} # YouTube APIキー
+          DATA_KEY: ${{ secrets.DATA_KEY }} # データ保存用環境変数
+
+      - name: Finish
+        run: echo "All tasks executed successfully."
