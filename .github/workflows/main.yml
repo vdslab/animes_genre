@@ -1,0 +1,31 @@
+name: Run script at specified time
+
+on:
+  schedule:
+    # 毎日午後2時（UTC）に実行
+    - cron: '0 14 * * *'
+
+  # 手動での実行も可能にする（オプション）
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest  # 実行するOSの選択
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'  # 使用するPythonのバージョンを指定
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # 必要なパッケージをインストール
+
+    - name: Run the script
+      run: |
+        python c:/Users/lotus/YouTubeAPI/animes_genre/collect_data/createjson.py  # 実行するスクリプトのパス
