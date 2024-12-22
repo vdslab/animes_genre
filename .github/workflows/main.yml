@@ -31,7 +31,7 @@ jobs:
       - name: Run YouTube data scraping
         run: python createjson.py
         env:
-          API_KEY: ${{ secrets.YOUTUBE_API_KEY }} # YouTube APIキー
+          API_KEY: ${{ secrets.AIzaSyDttMmdJWwncgdscYOLIq8i7_JojK6zyYY,AIzaSyAVX0cM8YC5ixQsGmbtdnCvhYr6_GgU_Uo,AIzaSyBFybfsGO8_iSi55wiSPEZfzNW3Q13Qjz0 }} # YouTube APIキー
           DATA_KEY: ${{ secrets.DATA_KEY }} # データ保存用環境変数
 
       - name: Finish
