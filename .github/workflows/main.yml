@@ -1,0 +1,38 @@
+name: Update YouTube and Steam Data
+
+on:
+  schedule:
+    - cron: "0 13 * * *" # 毎日13:00に実行
+  workflow_dispatch: # 手動での実行も可能
+
+jobs:
+  update_data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies for YouTube scraping
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests tqdm janome scikit-learn numpy psycopg2-binary python-dotenv
+
+      - name: Install dependencies for Steam scraping
+        run: |
+          pip install requests tqdm psycopg2-binary python-dotenv
+
+      # YouTube動画情報取得処理
+      - name: Run YouTube data scraping
+        run: python createjson.py
+        env:
+          API_KEY: ${{ secrets.YOUTUBE_API_KEY }} # YouTube APIキー
+          DATA_KEY: ${{ secrets.DATA_KEY }} # データ保存用環境変数
+
+      - name: Finish
+        run: echo "All tasks executed successfully."
