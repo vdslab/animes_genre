@@ -8,16 +8,45 @@ erranime=list()
 url = "https://graphql.anilist.co"
 
 # クエリの定義（タイトル指定）
-query = '''
+query = query = '''
 query ($search: String) {
   Media (search: $search, type: ANIME) {
     id
     title {
-      native  # 日本語タイトル
+      romaji
+      native
+      english
+    }
+    description(asHtml: false)
+    format
+    episodes
+    duration
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
     }
     genres
+    tags {
+      name
+      rank
+    }
+    studios {
+      nodes {
+        name
+      }
+    }
+    externalLinks {
+      site
+      url
+    }
     coverImage {
-      large  # アニメのカバー画像
+      large
     }
   }
 }
@@ -69,7 +98,7 @@ def transformdata(animes, year, n):
         erranime.append(anime_title)
         print("APIリクエストに失敗しました。")
         animedetail = None  # 失敗した場合はNoneを設定
-
+  
     # anime データを作成
     anime = {
         "id": animes["id"],
@@ -80,7 +109,16 @@ def transformdata(animes, year, n):
             animes["title_short3"],
             animes["twitter_hash_tag"]
         ],
+        "description":animedetail["description"] if animedetail else "不明",
+        "format":animedetail["format"] if animedetail else "不明",
+        "episodes":animedetail["episodes"] if animedetail else "不明",
+        "duration":animedetail["duration"] if animedetail else "不明",
+        "startDate":animedetail["startDate"] if animedetail else "不明",
+        "endDate":animedetail["endDate"] if animedetail else "不明",
         "genres": ', '.join(animedetail['genres']) if animedetail else "不明",
+        "tag":animedetail["tags"] if animedetail else "不明",
+        "studio":animedetail["studios"]["nodes"] if animedetail else "不明",
+        "link":animedetail["externalLinks"] if animedetail else "不明",
         "coverImage": animedetail['coverImage']['large'] if animedetail else "不明",
         "year": year,
         "n": n
@@ -90,7 +128,7 @@ def transformdata(animes, year, n):
 def get_anime_name():
     all_anime = []  # すべてのアニメ情報を保存するリスト
 
-    for year in range(2014, 2024):
+    for year in range(2014, 2025):
         for n in range(1, 5):
             response = requests.get(f'https://anime-api.deno.dev/anime/v1/master/{year}/{n}')
             if response.status_code == 200:
@@ -103,7 +141,7 @@ def get_anime_name():
                 print(f"Failed to retrieve data for {year} Q{n}: {response.status_code}")
 
     # すべてのアニメ情報をファイルに書き込む
-    with open('./data/animes.json', 'w', encoding='utf-8') as f:
+    with open('./data/animes_test.json', 'w', encoding='utf-8') as f:
         json.dump(all_anime, f, ensure_ascii=False, indent=4)
     print(erranime)
 

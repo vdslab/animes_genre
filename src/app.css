@@ -1,0 +1,13 @@
+.container {
+  display: flex; /* 子要素を横並びに配置 */
+  justify-content: space-around; /* 子要素間のスペースを均等に配置 */
+  align-items: center; /* 子要素を垂直方向に中央揃え */
+  margin-top: 20px; /* 上部に少しスペース */
+}
+
+.graph {
+  border: 1px solid #ccc; /* グラフの枠線 */
+  border-radius: 5px; /* 角を丸くする */
+  padding: 10px; /* グラフ内部のスペース */
+  background-color: #f9f9f9; /* 背景色 */
+}

@@ -3716,7 +3716,7 @@
     "year": 2016,
     "n": 4
   },
- 
+
   {
     "id": 417,
     "name": "ブブキ・ブランキ 星の巨人",
@@ -4739,7 +4739,7 @@
   {
     "id": 533,
     "name": "アイドルマスター シンデレラガールズ劇場",
-    "shortname": ["シンデレラガールズ", "", "", "しんげき"],
+    "shortname": ["シンデレラガールズ", "", "", ""],
     "genres": "Comedy, Music, Slice of Life",
     "coverImage": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx115519-9b8GNmYAyLZx.png",
     "year": 2017,
@@ -5564,7 +5564,7 @@
   {
     "id": 630,
     "name": "アイドルマスター シンデレラガールズ劇場 2nd SEASON",
-    "shortname": ["シンデレラガールズ", "デレマス", "", "しんげき"],
+    "shortname": ["シンデレラガールズ", "デレマス", "", ""],
     "genres": "Comedy, Music, Slice of Life",
     "coverImage": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx99742-duoJA5BKNBNe.jpg",
     "year": 2017,
@@ -6954,7 +6954,7 @@
   {
     "id": 786,
     "name": "アイドルマスター シンデレラガールズ劇場 3rd SEASON",
-    "shortname": ["デレマス", "", "", "しんげき"],
+    "shortname": ["デレマス", "", "", ""],
     "genres": "Comedy, Music, Slice of Life",
     "coverImage": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101267-5brbONhJSSlO.png",
     "year": 2018,
@@ -8230,7 +8230,7 @@
   {
     "id": 925,
     "name": "アイドルマスター シンデレラガールズ劇場 CLIMAX SEASON",
-    "shortname": ["シンデレラガールズ劇場", "", "", "しんげき"],
+    "shortname": ["シンデレラガールズ劇場", "", "", ""],
     "genres": "Comedy, Music, Slice of Life",
     "coverImage": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b105962-ftNGhs8OKPD7.png",
     "year": 2019,
@@ -15374,7 +15374,7 @@
     "year": 2023,
     "n": 1
   },
- 
+
   {
     "id": 1697,
     "name": "ダンジョンに出会いを求めるのは間違っているだろうかⅣ 深章 厄災篇",
