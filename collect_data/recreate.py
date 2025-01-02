@@ -13,7 +13,7 @@ def submit_anime(filepath, data):
 def update():
     # デフォルトのデータセットを構築
     month=["01","02","03","04","05","06","07","08","09","10","11","12"]
-    default_dataset = {year: {m: 0 for m in month} for year in range(2005, 2025)}
+    default_dataset = {year: {m: 0 for m in month} for year in range(2005, 2026)}
 
     # アニメデータを取得
     anime = get_anime_name('./data/animes_test.json')
@@ -146,10 +146,10 @@ def process_video_data(state, video_data, keyword):
         if match:
             date = item['snippet']['publishedAt'].split("T")[0].split("-")
             year, month = date[0], date[1]
-            state["anime_data"][DATA_KEY - 1]['viewCount'][year][month] += item['statistics'].get('viewCount', 0)
-            state["anime_data"][DATA_KEY - 1]['likeCount'][year][month] += item['statistics'].get('likeCount', 0)
-            state["anime_data"][DATA_KEY - 1]['commentCount'][year][month] += item['statistics'].get('commentCount', 0)
-            state["anime_data"][DATA_KEY - 1]['videoCount'][year][month] += 1
+            state["anime_data"][DATA_KEY]['viewCount'][year][month] += int(item['statistics'].get('viewCount', 0))
+            state["anime_data"][DATA_KEY ]['likeCount'][year][month] += int(item['statistics'].get('likeCount', 0))
+            state["anime_data"][DATA_KEY ]['commentCount'][year][month] += int(item['statistics'].get('commentCount', 0))
+            state["anime_data"][DATA_KEY ]['videoCount'][year][month] += 1
     return state
 
 def update_data_key(data_key):
@@ -168,10 +168,10 @@ def get_anime_name(filepath=STATE_FILE):
 
 def main():
     global DATA_KEY  # グローバル変数として扱う
-    state = get_anime_name()
+    state = get_anime_name(STATE_FILE)
     DATA_KEY = state["last_id"]
     page_token = state['nextPageToken']
-    keywords = get_anime_name()
+    keywords = state["anime_data"]
 
     with ThreadPoolExecutor(max_workers=5) as executor:
         while DATA_KEY < len(keywords):
