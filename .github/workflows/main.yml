@@ -37,12 +37,15 @@ jobs:
         run: python ./collect_data/recreate.py  # スクリプト名に変更
 
       # 変更があればコミット
+      # 変更があればコミット
       - name: Commit and push changes
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}  # Personal Access Tokenを利用
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git pull origin master  # リモートの変更を取得して統合
           git add ./data/animes_tests.json
           git commit -m "Update animes_tests.json (Automated)" || echo "No changes to commit"
           git push origin HEAD
+
