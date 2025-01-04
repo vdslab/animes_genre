@@ -8,19 +8,23 @@ import pandas as pd
 # 1. ランダムデータ生成
 import json
 
-with open('./data/animes.json', 'r', encoding='utf-8') as f:
+with open('./data/animes_tests.json', 'r', encoding='utf-8') as f:
     datas = json.load(f)  # 辞書型に変換
 
 
 data=[]
 filedata=[]
 
-for i in datas:
-    if i["genres"]!="不明":
+for i in datas["anime_data"]:
+    if i["genres"] != "不明":
+        genres = i["genres"]
+        if isinstance(genres, str):  # genres が文字列の場合
+            genres = genres.split(", ")
         data.append({
-        "title": i["name"],
-        "genres": i["genres"].split(", ") # 2～5ジャンルをランダム選択
-    })
+            "title": i["name"],
+            "genres": genres
+        })
+
 
 
 # 2. ワンホットエンコーディング
@@ -48,12 +52,21 @@ random_sizes = np.random.randint(50, 500, size=len(data))  # 50〜500のラン�
 
 for i in range(len(reduced_data_mds)):
     filedata.append(
-        {"animename":datas[i]["name"],
-         "coverImage":datas[i]["coverImage"],
+        {"animename":datas["anime_data"][i]["name"],
+         "coverImage":datas["anime_data"][i]["coverImage"],
          "x":float(reduced_data_mds[i, 0]),
          "y":float(reduced_data_mds[i, 1]),
-         "year": datas[i]["year"],
-         "n": datas[i]["n"],
+         "year": datas["anime_data"][i]["year"],
+         "n": datas["anime_data"][i]["n"],
+         "description":datas["anime_data"][i]["description"],
+         "startDate":datas["anime_data"][i]["startDate"],
+         "endDate":datas["anime_data"][i]["endDate"],
+         "studio":datas["anime_data"][i]["studio"],
+        "link":datas["anime_data"][i]["link"],
+        "viewCount":datas["anime_data"][i]["viewCount"],
+        "likeCount":datas["anime_data"][i]["likeCount"],
+        "commentCount":datas["anime_data"][i]["commentCount"],
+        "videoCount":datas["anime_data"][i]["videoCount"],
          "color":"blue"
          })
 
