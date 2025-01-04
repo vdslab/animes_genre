@@ -9,6 +9,7 @@ function App() {
   const svgRef = useRef(null); // SVG を参照するための useRef
   const zoomRef = useRef(null);
   const [zoomscale, setZoomscale] = useState({ k: 1, x: 0, y: 0 });
+  const [clickNode,setClickNode]=useState(null)
 
   useEffect(() => {
     // データの読み込み
@@ -103,53 +104,8 @@ function App() {
 
   return pagestatus ? (
     <div className="container">
+      {clickNode==null&&(
       <div className="graph">
-        <svg
-          ref={svgRef}
-          width="1000"
-          height="1000"
-          style={{ top: 20, right: 30, bottom: 30, left: 40 }}
-        >
-          <g>
-            {/* ノードを描画 */}
-            {nodedata.map((node, index) => {
-              if (zoomscale.k < 3) {
-                return (
-                  <ellipse
-                    key={index}
-                    cx={scales.xScale(node.x)}
-                    cy={scales.yScale(node.y)}
-                    rx="10"
-                    ry="10"
-                    fill={node.color}
-                    onClick={() => {
-                      console.log(node.animename);
-                    }}
-                    style={{ cursor: "pointer" }}
-                  ></ellipse>
-                );
-              } else {
-                return (
-                  <image
-                    key={index}
-                    x={scales.xScale(node.x) - 10} // イメージを中央に配置
-                    y={scales.yScale(node.y) - 10} // イメージを中央に配置
-                    width="10" // サイズ調整
-                    height="10" // サイズ調整
-                    href={node.coverImage}
-                    onClick={() => {
-                      console.log(node.animename);
-                    }}
-                    style={{ cursor: "pointer" }}
-                  />
-                );
-              }
-            })}
-          </g>
-        </svg>
-      </div>
-      <div>
-        <div className="graph">
           <svg
             width="500"
             height="500"
@@ -173,15 +129,118 @@ function App() {
                     key={index}
                     cx={scales.xScale(node.x) / 2}
                     cy={scales.yScale(node.y) / 2}
-                    rx="5"
-                    ry="5"
+                    rx="2.5"
+                    ry="2.5"
                     fill={node.color}
                   ></ellipse>
                 );
               })}
             </g>
           </svg>
-        </div>
+        </div>)}
+      <div className="graph">
+        <svg
+          ref={svgRef}
+          width="1000"
+          height="1000"
+          style={{ top: 20, right: 30, bottom: 30, left: 40 }}
+        >
+          <g>
+            {/* ノードを描画 */}
+            {nodedata.map((node, index) => {
+              if (zoomscale.k < 3) {
+                return (
+                  <ellipse
+                    key={index}
+                    cx={scales.xScale(node.x)}
+                    cy={scales.yScale(node.y)}
+                    rx="5"
+                    ry="5"
+                    fill={node.color}
+                    onClick={() =>{
+                      const sca = 5; // 新しいズーム倍率
+                      const newScale = {
+                        k: sca,
+                        x: -scales.xScale(node.x) * sca + 500 , // 中心に持ってくる計算
+                        y: -scales.yScale(node.y) * sca + 500 ,
+                      };
+                    
+                      // D3 ズームの状態を更新
+                      const transform = d3.zoomIdentity
+                        .translate(newScale.x, newScale.y)
+                        .scale(newScale.k);
+                    
+                      d3.select(svgRef.current)
+                        .transition()
+                        .duration(750)
+                        .call(zoomRef.current.transform, transform);
+                    
+                      setClickNode(node);
+                                        
+                    }}
+                    style={{ cursor: "pointer" }}
+                  ></ellipse>
+                );
+              } else {
+                return (
+                  <image
+                    key={index}
+                    x={scales.xScale(node.x) - 10} // イメージを中央に配置
+                    y={scales.yScale(node.y) - 10} // イメージを中央に配置
+                    width="10" // サイズ調整
+                    height="10" // サイズ調整
+                    href={node.coverImage}
+                    onClick={() => {
+                      const sca = 5; // 新しいズーム倍率
+                      const newScale = {
+                        k: sca,
+                        x: -scales.xScale(node.x) * sca + 500, // 中心に持ってくる計算
+                        y: -scales.yScale(node.y) * sca + 500 ,
+                      };
+                    
+                      // D3 ズームの状態を更新
+                      const transform = d3.zoomIdentity
+                        .translate(newScale.x, newScale.y)
+                        .scale(newScale.k);
+                    
+                      d3.select(svgRef.current)
+                        .transition()
+                        .duration(750)
+                        .call(zoomRef.current.transform, transform);
+                    
+                      setClickNode(node);
+                    }}
+                    
+                    style={{ cursor: "pointer" }}
+                  />
+                );
+              }
+            })}
+          </g>
+        </svg>
+      </div>
+      {clickNode!=null&&(
+        <div>
+          <h2>{clickNode.animename}</h2>
+          <img src={clickNode.coverImage} alt={clickNode.animename} />
+          <h3>あらすじ</h3>
+          <h4>{clickNode.description}</h4>
+          <h3>放送期間：</h3>
+          <h3>{clickNode.startDate.year}年 {clickNode.startDate.month}月 {clickNode.startDate.day}日から{clickNode.endDate.year}年 {clickNode.endDate.month}月 {clickNode.endDate.day}日</h3>
+          <h3>公式ページ</h3>
+          {clickNode.link.map((node)=>(
+            <div>
+            <h4>{node["site"]} URL:</h4>
+            <a href={node["url"]}>{node["url"]}</a>
+            </div>
+          ))}
+
+          <button onClick={()=>{setClickNode(null)}}>閉じる</button>
+
+          
+        </div>)}
+      <div>
+        
       </div>
     </div>
   ) : (
