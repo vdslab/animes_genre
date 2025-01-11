@@ -136,7 +136,6 @@ function App() {
       {clickNode==null&&(
       <div className="graph">
         <div className="Box">
-        <p>2006年1月</p>
         <div style={{ textAlign: "center" }}>
           {/* {stop ? (
             <img
@@ -172,9 +171,7 @@ function App() {
               margin: "0 auto",
             }}
           />
-          <p>{yearsnext}年{monthsnext}月</p>
         </div>
-        <p>2025年1月</p>
       </div>
 
       <div>
@@ -275,11 +272,11 @@ function App() {
                     key={index}
                     x={scales.xScale(node.x) - 10} // イメージを中央に配置
                     y={scales.yScale(node.y) - 10} // イメージを中央に配置
-                    width="10" // サイズ調整
-                    height="10" // サイズ調整
+                    width={nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                    height={nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
                     href={node.coverImage}
                     onClick={() => {
-                      const sca = 5; // 新しいズーム倍率
+                      const sca = 10; // 新しいズーム倍率
                       const newScale = {
                         k: sca,
                         x: -scales.xScale(node.x) * sca + 500, // 中心に持ってくる計算
