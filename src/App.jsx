@@ -8,8 +8,15 @@ function App() {
   const [scales, setScales] = useState({});
   const svgRef = useRef(null); // SVG を参照するための useRef
   const zoomRef = useRef(null);
+  const [select,setSelect]=useState("viewCount")
+  const [yearsnext,setYearsnext]=useState(2006)
+  const [monthsnext,setMonthsnext]=useState("01")
   const [zoomscale, setZoomscale] = useState({ k: 1, x: 0, y: 0 });
   const [clickNode,setClickNode]=useState(null)
+  const [nodeScale,setNodeScale]=useState(null)
+  const [scaleStatus,setScaleStatus]=useState(false)
+  const years=[2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025]
+  const months=["01","02","03","04","05","06","07","08","09","10","11","12"]
 
   useEffect(() => {
     // データの読み込み
@@ -17,10 +24,32 @@ function App() {
       .then((response) => response.json())
       .then((res) => {
         setNodedata(res);
+        console.log(res)
         setScales(scalemake(res));
         setStatus(true);
       });
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let max = 0;
+      nodedata.forEach((item) => {
+        if (max < item[select][yearsnext][monthsnext]) {
+          max = item[select][yearsnext][monthsnext];
+        }
+      });
+      const Scale = d3
+        .scaleLinear()
+        .domain([0, max])
+        .range([1, 10])
+        .nice();
+      setNodeScale(() => Scale); // setNodeScaleを直接関数として渡す
+      setScaleStatus(true);
+    };
+  
+    fetchData();
+  }, [select, yearsnext, monthsnext]);
+  
 
   const scalemake = (data) => {
     let scale = {};
@@ -106,6 +135,65 @@ function App() {
     <div className="container">
       {clickNode==null&&(
       <div className="graph">
+        <div className="Box">
+        <p>2006年1月</p>
+        <div style={{ textAlign: "center" }}>
+          {/* {stop ? (
+            <img
+              src="start.png"
+              onClick={(e) => {
+                setStop(false);
+              }}
+              style={{ cursor: "pointer" }}
+            />
+          ) : (
+            <img
+              src="stop.png"
+              onClick={(e) => {
+                setStop(true);
+              }}
+              style={{ cursor: "pointer" }}
+            />
+          )} */}
+          <input
+            type="range"
+            min="0"
+            max={(years.length-1)*months.length}
+            value={years.findIndex((item) => item === yearsnext)*12+months.findIndex((item) => item === monthsnext)}
+            onChange={(e)=>{
+              setScaleStatus(false)
+              setYearsnext(years[((e.target.value-e.target.value%12)/12)])
+              setMonthsnext(months[e.target.value%12])
+              
+            }}
+            style={{
+              width: "300px",
+              display: "block",
+              margin: "0 auto",
+            }}
+          />
+          <p>{yearsnext}年{monthsnext}月</p>
+        </div>
+        <p>2025年1月</p>
+      </div>
+
+      <div>
+        <h3>{yearsnext}年{monthsnext}月</h3>
+
+        <select
+          style={{
+            display: "block",
+            margin: "10px auto",
+            padding: "10px 15px",
+          }}
+          onChange={(e) => setSelect(e.target.value)}
+        >
+          <option value="viewCount">総視聴回数</option>
+          <option value="likeCount">総いいね数</option>
+          <option value="commentCount">総コメント数</option>
+          <option value="videoCount">総動画数</option>
+        </select>
+      </div>
           <svg
             width="500"
             height="500"
@@ -123,18 +211,18 @@ function App() {
                 strokeWidth={5}
               ></rect>
               {/* ノードを描画 */}
-              {nodedata.map((node, index) => {
+              {scaleStatus?nodedata.map((node, index) => {
                 return (
                   <ellipse
                     key={index}
                     cx={scales.xScale(node.x) / 2}
                     cy={scales.yScale(node.y) / 2}
-                    rx="2.5"
-                    ry="2.5"
+                    rx={nodeScale(node[select][yearsnext][monthsnext])/2}
+                    ry={nodeScale(node[select][yearsnext][monthsnext])/2}
                     fill={node.color}
                   ></ellipse>
                 );
-              })}
+              }):(<div>少々お待ちください</div>)}
             </g>
           </svg>
         </div>)}
@@ -147,15 +235,15 @@ function App() {
         >
           <g>
             {/* ノードを描画 */}
-            {nodedata.map((node, index) => {
+            {scaleStatus?nodedata.map((node, index) => {
               if (zoomscale.k < 3) {
                 return (
                   <ellipse
                     key={index}
                     cx={scales.xScale(node.x)}
                     cy={scales.yScale(node.y)}
-                    rx="5"
-                    ry="5"
+                    rx={nodeScale(node[select][yearsnext][monthsnext])}
+                    ry={nodeScale(node[select][yearsnext][monthsnext])}
                     fill={node.color}
                     onClick={() =>{
                       const sca = 5; // 新しいズーム倍率
@@ -215,7 +303,7 @@ function App() {
                   />
                 );
               }
-            })}
+            }):(<div>少々お待ちください</div>)}
           </g>
         </svg>
       </div>
