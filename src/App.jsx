@@ -197,6 +197,16 @@ function App() {
               style={{ cursor: "pointer" }}
             />
           )} */}
+          <div>
+          <input
+        type="checkbox"
+        checked={allview}
+        onChange={() => {
+          setScaleStatus(false)
+          setAllview(!allview)}}
+      />
+      <label>総合を見る</label>
+      </div>
           <Select
         options={nodedata}
         value={clickNode}
@@ -210,6 +220,9 @@ function App() {
             .includes(inputValue.toLowerCase());
         }}
       />
+      {!allview&&(
+        <div>
+      <h3>{yearsnext}年{monthsnext}月</h3>
           <input
             type="range"
             min="0"
@@ -227,11 +240,12 @@ function App() {
               margin: "0 auto",
             }}
           />
+          </div>
+      )}
         </div>
       </div>
 
       <div>
-        <h3>{yearsnext}年{monthsnext}月</h3>
 
         <select
           style={{
