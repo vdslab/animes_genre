@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import Select from 'react-select'
 import * as d3 from "d3";
 import "./app.css";
 
@@ -9,6 +10,7 @@ function App() {
   const svgRef = useRef(null); // SVG を参照するための useRef
   const zoomRef = useRef(null);
   const [select,setSelect]=useState("viewCount")
+  const [allview,setAllview]=useState(true)
   const [yearsnext,setYearsnext]=useState(2006)
   const [monthsnext,setMonthsnext]=useState("01")
   const [zoomscale, setZoomscale] = useState({ k: 1, x: 0, y: 0 });
@@ -17,6 +19,8 @@ function App() {
   const [scaleStatus,setScaleStatus]=useState(false)
   const years=[2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025]
   const months=["01","02","03","04","05","06","07","08","09","10","11","12"]
+
+
 
   useEffect(() => {
     // データの読み込み
@@ -110,6 +114,27 @@ function App() {
   };
 
   useEffect(() => {
+    if(clickNode!=null){
+    const sca = 10; // 新しいズーム倍率
+    const newScale = {
+      k: sca,
+      x: -scales.xScale(clickNode.x) * sca + 500, // 中心に持ってくる計算
+      y: -scales.yScale(clickNode.y) * sca + 500 ,
+    };
+  
+    // D3 ズームの状態を更新
+    const transform = d3.zoomIdentity
+      .translate(newScale.x, newScale.y)
+      .scale(newScale.k);
+  
+    d3.select(svgRef.current)
+      .transition()
+      .duration(750)
+      .call(zoomRef.current.transform, transform);
+  
+  }
+  },[clickNode])
+  useEffect(() => {
     if (pagestatus) {
       const svg = d3.select(svgRef.current);
 
@@ -154,6 +179,19 @@ function App() {
               style={{ cursor: "pointer" }}
             />
           )} */}
+          <Select
+        options={nodedata}
+        value={clickNode}
+        getOptionLabel={(option) => option.animename}
+        onChange={(option) => setClickNode(option)}
+        placeholder="ジャンルを検索..."
+        filterOption={(option, inputValue) => {
+          // value のみを検索対象にする
+          return option.data.animename
+            .toLowerCase()
+            .includes(inputValue.toLowerCase());
+        }}
+      />
           <input
             type="range"
             min="0"
@@ -242,27 +280,7 @@ function App() {
                     rx={nodeScale(node[select][yearsnext][monthsnext])}
                     ry={nodeScale(node[select][yearsnext][monthsnext])}
                     fill={node.color}
-                    onClick={() =>{
-                      const sca = 5; // 新しいズーム倍率
-                      const newScale = {
-                        k: sca,
-                        x: -scales.xScale(node.x) * sca + 500 , // 中心に持ってくる計算
-                        y: -scales.yScale(node.y) * sca + 500 ,
-                      };
-                    
-                      // D3 ズームの状態を更新
-                      const transform = d3.zoomIdentity
-                        .translate(newScale.x, newScale.y)
-                        .scale(newScale.k);
-                    
-                      d3.select(svgRef.current)
-                        .transition()
-                        .duration(750)
-                        .call(zoomRef.current.transform, transform);
-                    
-                      setClickNode(node);
-                                        
-                    }}
+                    onClick={()=>setClickNode(node)}
                     style={{ cursor: "pointer" }}
                   ></ellipse>
                 );
@@ -275,26 +293,7 @@ function App() {
                     width={nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
                     height={nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
                     href={node.coverImage}
-                    onClick={() => {
-                      const sca = 10; // 新しいズーム倍率
-                      const newScale = {
-                        k: sca,
-                        x: -scales.xScale(node.x) * sca + 500, // 中心に持ってくる計算
-                        y: -scales.yScale(node.y) * sca + 500 ,
-                      };
-                    
-                      // D3 ズームの状態を更新
-                      const transform = d3.zoomIdentity
-                        .translate(newScale.x, newScale.y)
-                        .scale(newScale.k);
-                    
-                      d3.select(svgRef.current)
-                        .transition()
-                        .duration(750)
-                        .call(zoomRef.current.transform, transform);
-                    
-                      setClickNode(node);
-                    }}
+                    onClick={() => setClickNode(node)}
                     
                     style={{ cursor: "pointer" }}
                   />

@@ -25,6 +25,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-refresh": "^0.14.2",
+    "react-select": "^5.9.0",
     "rollup": "^4.28.1",
     "scheduler": "^0.25.0",
     "semver": "^6.3.1",
