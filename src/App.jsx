@@ -9,7 +9,7 @@ function App() {
   const [scales, setScales] = useState({});
   const svgRef = useRef(null); // SVG を参照するための useRef
   const zoomRef = useRef(null);
-  const [select,setSelect]=useState("viewCount")
+  const [select,setSelect]=useState("videoCount")
   const [allview,setAllview]=useState(true)
   const [alldata,setAlldata]=useState(null)
   const [yearsnext,setYearsnext]=useState(2006)
@@ -255,10 +255,11 @@ function App() {
           }}
           onChange={(e) => setSelect(e.target.value)}
         >
+          
+          <option value="videoCount">総動画数</option>
           <option value="viewCount">総視聴回数</option>
           <option value="likeCount">総いいね数</option>
           <option value="commentCount">総コメント数</option>
-          <option value="videoCount">総動画数</option>
         </select>
       </div>
           <svg
