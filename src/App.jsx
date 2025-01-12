@@ -11,6 +11,7 @@ function App() {
   const zoomRef = useRef(null);
   const [select,setSelect]=useState("viewCount")
   const [allview,setAllview]=useState(true)
+  const [alldata,setAlldata]=useState(null)
   const [yearsnext,setYearsnext]=useState(2006)
   const [monthsnext,setMonthsnext]=useState("01")
   const [zoomscale, setZoomscale] = useState({ k: 1, x: 0, y: 0 });
@@ -32,27 +33,44 @@ function App() {
         setScales(scalemake(res));
         setStatus(true);
       });
+    fetch("../data/data_All.json")
+      .then((response) => response.json())
+      .then((res) => {
+        setAlldata(res);
+        console.log(res)
+      });
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      let max = 0;
-      nodedata.forEach((item) => {
-        if (max < item[select][yearsnext][monthsnext]) {
-          max = item[select][yearsnext][monthsnext];
+      if (alldata) { // alldataが存在する場合に処理を実行
+        let max=0
+        if (allview) {
+          alldata.forEach((item) => {
+            if (max < item[select]) {
+              max = item[select];
+            }
+          });
+        } else {
+          nodedata.forEach((item) => {
+            if (max < item[select][yearsnext][monthsnext]) {
+              max = item[select][yearsnext][monthsnext];
+            }
+          });
         }
-      });
-      const Scale = d3
-        .scaleLinear()
-        .domain([0, max])
-        .range([1, 10])
-        .nice();
-      setNodeScale(() => Scale); // setNodeScaleを直接関数として渡す
-      setScaleStatus(true);
+        const Scale = d3
+          .scaleLinear()
+          .domain([0, max])
+          .range([1, 10])
+          .nice();
+        setNodeScale(() => Scale); // setNodeScaleを直接関数として渡す
+        setScaleStatus(true);
+      }
     };
-  
-    fetchData();
-  }, [select, yearsnext, monthsnext]);
+
+    fetchData()
+    
+  }, [alldata,allview,select, yearsnext, monthsnext]);
   
 
   const scalemake = (data) => {
@@ -252,8 +270,8 @@ function App() {
                     key={index}
                     cx={scales.xScale(node.x) / 2}
                     cy={scales.yScale(node.y) / 2}
-                    rx={nodeScale(node[select][yearsnext][monthsnext])/2}
-                    ry={nodeScale(node[select][yearsnext][monthsnext])/2}
+                    rx={allview?nodeScale(alldata[index][select])/2:nodeScale(node[select][yearsnext][monthsnext])/2}
+                    ry={allview?nodeScale(alldata[index][select])/2:nodeScale(node[select][yearsnext][monthsnext])/2}
                     fill={node.color}
                   ></ellipse>
                 );
@@ -277,8 +295,8 @@ function App() {
                     key={index}
                     cx={scales.xScale(node.x)}
                     cy={scales.yScale(node.y)}
-                    rx={nodeScale(node[select][yearsnext][monthsnext])}
-                    ry={nodeScale(node[select][yearsnext][monthsnext])}
+                    rx={allview?nodeScale(alldata[index][select]):nodeScale(node[select][yearsnext][monthsnext])}
+                    ry={allview?nodeScale(alldata[index][select]):nodeScale(node[select][yearsnext][monthsnext])}
                     fill={node.color}
                     onClick={()=>setClickNode(node)}
                     style={{ cursor: "pointer" }}
@@ -290,8 +308,8 @@ function App() {
                     key={index}
                     x={scales.xScale(node.x) - 10} // イメージを中央に配置
                     y={scales.yScale(node.y) - 10} // イメージを中央に配置
-                    width={nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
-                    height={nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                    width={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                    height={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
                     href={node.coverImage}
                     onClick={() => setClickNode(node)}
                     

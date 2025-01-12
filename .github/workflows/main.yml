@@ -36,9 +36,6 @@ jobs:
       - name: Run YouTube fetch script
         run: python ./collect_data/recreate.py  # スクリプト名に変更
 
-      - name: Run data fetch script
-        run: python ./collect_data/sum.py  # スクリプト名に変更
-
       # 変更があればコミット
       # 変更があればコミット
       - name: Commit and push changes
