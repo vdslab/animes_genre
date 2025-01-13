@@ -207,19 +207,30 @@ function App() {
       />
       <label>総合を見る</label>
       </div>
-          <Select
-        options={nodedata}
-        value={clickNode}
-        getOptionLabel={(option) => option.animename}
-        onChange={(option) => setClickNode(option)}
-        placeholder="ジャンルを検索..."
-        filterOption={(option, inputValue) => {
-          // value のみを検索対象にする
-          return option.data.animename
-            .toLowerCase()
-            .includes(inputValue.toLowerCase());
-        }}
-      />
+      <Select
+  options={nodedata}
+  value={clickNode}
+  getOptionLabel={(option) => option.animename || "Unknown Anime"}
+  onChange={(option) => setClickNode(option)}
+  placeholder="ジャンルを検索..."
+  filterOption={(option, inputValue) => {
+    // animename が存在しない場合は空文字列を使用
+    const animename = (option.data.animename || "")
+      .toLowerCase()
+      .includes(inputValue.toLowerCase());
+
+    // shortname が存在しない場合は空配列を使用
+    const anime_shortname = (option.data.shortname || [])
+      .filter((item) => item) // 空文字列や undefined を除外
+      .some((item) =>
+        item.toLowerCase().includes(inputValue.toLowerCase())
+      );
+
+    return animename || anime_shortname;
+  }}
+/>
+
+
       {!allview&&(
         <div>
       <h3>{yearsnext}年{monthsnext}月</h3>
