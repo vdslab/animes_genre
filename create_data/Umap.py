@@ -46,6 +46,7 @@ def genre():
         filedata.append(
         {"animename":datas["anime_data"][i]["name"],
          "coverImage":datas["anime_data"][i]["coverImage"],
+         "shortname":datas["anime_data"][i]["shortname"],
          "x":float(reduced_data[i, 0]),
          "y":float(reduced_data[i, 1]),
          "year": datas["anime_data"][i]["year"],
