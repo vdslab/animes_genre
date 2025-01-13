@@ -103,6 +103,7 @@ def tags():
          "y":float(anime_mds[i, 1]),
          "year": datas["anime_data"][i]["year"],
          "n": datas["anime_data"][i]["n"],
+         "shortname":datas["anime_data"][i]["shortname"],
          "description":datas["anime_data"][i]["description"],
          "startDate":datas["anime_data"][i]["startDate"],
          "endDate":datas["anime_data"][i]["endDate"],
