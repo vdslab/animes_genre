@@ -171,8 +171,8 @@ function App() {
         .zoom()
         .scaleExtent([1, 10]) // ズーム倍率の範囲
         .translateExtent([
-          [0, 0],
-          [1000, 1000],
+          [-50, -50],
+          [1050, 1050],
         ]) // パン可能な範囲
         .on("zoom", (event) => {
           setZoomscale(event.transform);
