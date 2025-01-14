@@ -339,8 +339,23 @@ function App() {
                   ></ellipse>
                 );
               } else {
+                if(clickNode!=null){
                 return (
                   <image
+                    key={index}
+                    x={scales.xScale(node.x) - 10} // イメージを中央に配置
+                    y={scales.yScale(node.y) - 10} // イメージを中央に配置
+                    width={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                    height={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                    href={node.coverImage}
+                    onClick={() => setClickNode(node)}
+                    opacity={clickNode!=node&&0.35}
+                    
+                    style={{ cursor: "pointer" }}
+                  />
+                )} else {
+                  return(
+                    <image
                     key={index}
                     x={scales.xScale(node.x) - 10} // イメージを中央に配置
                     y={scales.yScale(node.y) - 10} // イメージを中央に配置
@@ -351,7 +366,8 @@ function App() {
                     
                     style={{ cursor: "pointer" }}
                   />
-                );
+                  )
+                }
               }
             }):(<div>少々お待ちください</div>)}
           </g>
