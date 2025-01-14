@@ -141,6 +141,8 @@ function App() {
       .call(zoomRef.current.transform, transform);
   };
 
+  console.log(clickNode)
+
   useEffect(() => {
     if(clickNode!=null){
     const sca = 10; // 新しいズーム倍率
@@ -422,7 +424,9 @@ function App() {
           <h4>{clickNode.description.replace(/<[^>]*>/g, '')}</h4>
           <h3>放送期間：</h3>
           <h3>{clickNode.startDate.year}年 {clickNode.startDate.month}月 {clickNode.startDate.day}日から{clickNode.endDate.year}年 {clickNode.endDate.month}月 {clickNode.endDate.day}日</h3>
-          <h3>公式ページ</h3>
+          {clickNode.studio.length!=0&&(<h3>スタジオ</h3>)}
+          <h4>{clickNode.studio.map(node => node.name).join(", ")}</h4>
+          {clickNode.link.length!=0&&(<h3>公式ページ</h3>)}
           {clickNode.link.map((node)=>(
             <div>
             <h4>{node["site"]} URL:</h4>
