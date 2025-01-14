@@ -349,7 +349,7 @@ function App() {
                     height={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
                     href={node.coverImage}
                     onClick={() => setClickNode(node)}
-                    opacity={clickNode!=node&&0.35}
+                    opacity={clickNode==node&&0.65}
                     
                     style={{ cursor: "pointer" }}
                   />
