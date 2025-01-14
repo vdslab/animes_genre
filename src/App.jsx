@@ -301,6 +301,8 @@ function App() {
               ></rect>
               {/* ノードを描画 */}
               {scaleStatus?nodedata.map((node, index) => {
+                if(!allview){
+                  if(node[select][yearsnext][monthsnext]!=0){
                 return (
                   <ellipse
                     key={index}
@@ -310,7 +312,17 @@ function App() {
                     ry={allview?nodeScale(alldata[index][select])/2:nodeScale(node[select][yearsnext][monthsnext])/2}
                     fill={node.color}
                   ></ellipse>
-                );
+                );}
+              } else {
+                return(<ellipse
+                  key={index}
+                  cx={scales.xScale(node.x) / 2}
+                  cy={scales.yScale(node.y) / 2}
+                  rx={allview?nodeScale(alldata[index][select])/2:nodeScale(node[select][yearsnext][monthsnext])/2}
+                  ry={allview?nodeScale(alldata[index][select])/2:nodeScale(node[select][yearsnext][monthsnext])/2}
+                  fill={node.color}
+                ></ellipse>)
+              }
               }):(<div>少々お待ちください</div>)}
             </g>
           </svg>
@@ -339,18 +351,18 @@ function App() {
                   ></ellipse>
                 );
               } else {
+                if(allview){
                 if(clickNode!=null){
                 return (
                   <image
                     key={index}
                     x={scales.xScale(node.x) - 10} // イメージを中央に配置
                     y={scales.yScale(node.y) - 10} // イメージを中央に配置
-                    width={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
-                    height={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                    width={nodeScale(alldata[index][select])*5} // サイズ調整
+                    height={nodeScale(alldata[index][select])*5} // サイズ調整
                     href={node.coverImage}
                     onClick={() => setClickNode(node)}
                     opacity={clickNode==node&&0.65}
-                    
                     style={{ cursor: "pointer" }}
                   />
                 )} else {
@@ -363,10 +375,39 @@ function App() {
                     height={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
                     href={node.coverImage}
                     onClick={() => setClickNode(node)}
-                    
                     style={{ cursor: "pointer" }}
                   />
                   )
+                }} else {
+                  if(clickNode!=null){
+                    return (
+                      <image
+                        key={index}
+                        x={scales.xScale(node.x) - 10} // イメージを中央に配置
+                        y={scales.yScale(node.y) - 10} // イメージを中央に配置
+                        width={nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                        height={nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                        href={node.coverImage}
+                        onClick={() => setClickNode(node)}
+                        opacity={clickNode==node||node[select][yearsnext][monthsnext]==0&&0.35}
+                        
+                        style={{ cursor: "pointer" }}
+                      />
+                    )} else {
+                      return(
+                        <image
+                        key={index}
+                        x={scales.xScale(node.x) - 10} // イメージを中央に配置
+                        y={scales.yScale(node.y) - 10} // イメージを中央に配置
+                        width={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                        height={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                        href={node.coverImage}
+                        onClick={() => setClickNode(node)}
+                        opacity={node[select][yearsnext][monthsnext]==0&&0.35}
+                        style={{ cursor: "pointer" }}
+                      />
+                      )
+                    }
                 }
               }
             }):(<div>少々お待ちください</div>)}
