@@ -417,7 +417,7 @@ function App() {
         </svg>
       </div>
       {clickNode!=null&&(
-        <div>
+        <div className="click_After">
           <h2>{clickNode.animename}</h2>
           <img src={clickNode.coverImage} alt={clickNode.animename} />
           <h3>あらすじ</h3>
