@@ -116,7 +116,7 @@ def tags():
          "color":"blue"
          })
 
-    with open('./data/node.json', 'w', encoding='utf-8') as f:
+    with open('./public/data/node.json', 'w', encoding='utf-8') as f:
         json.dump(filedata, f, ensure_ascii=False, indent=4)
 
 # # 可視化
