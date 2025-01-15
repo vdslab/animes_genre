@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import Select from 'react-select'
 import * as d3 from "d3";
 import "./app.css";
-
 function App() {
   const [pagestatus, setStatus] = useState(false);
   const [nodedata, setNodedata] = useState([]);
@@ -17,6 +16,8 @@ function App() {
   const [zoomscale, setZoomscale] = useState({ k: 1, x: 0, y: 0 });
   const [clickNode,setClickNode]=useState(null)
   const [nodeScale,setNodeScale]=useState(null)
+  const [stop,setStop]=useState(false)
+  const intervalIdRef = useRef(null);
   const [scaleStatus,setScaleStatus]=useState(false)
   const years=[2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025]
   const months=["01","02","03","04","05","06","07","08","09","10","11","12"]
@@ -160,6 +161,7 @@ function App() {
   
   }
   },[clickNode])
+ 
   useEffect(() => {
     if (pagestatus) {
       const svg = d3.select(svgRef.current);
@@ -181,6 +183,31 @@ function App() {
       zoomRef.current = zoom; // zoom インスタンスを ref に保存
     }
   }, [pagestatus]);
+  
+  useEffect(() => {
+    const timerId = (g) => {
+      if (!stop &&!allview) {
+        let month=months.findIndex(element=>element==monthsnext) +1
+        console.log(Number(yearsnext),month)
+        if(Number(yearsnext)==2025 && month==1){
+          setYearsnext("2005")
+          month=0
+        }
+        if(month>11){
+          month=0
+          setYearsnext(String(Number(yearsnext)+1))
+          setMonthsnext(months[month])
+        } else {
+          setMonthsnext(months[month])
+        }
+      }
+    };
+
+    const intervalId = setInterval(() => {
+      timerId(null);
+    }, 2000);
+    return () => clearInterval(intervalId);
+  }, [stop,allview,yearsnext, monthsnext]); // sortDataとyearsnextが変更されるたびに最新の値を使う
 
   return pagestatus ? (
     <div className={clickNode!=null?"container1":"container2"}>
@@ -242,6 +269,7 @@ function App() {
       {!allview&&(
         <div>
       <h3>{yearsnext}年{monthsnext}月</h3>
+          {!stop?(<button onClick={()=>setStop(true)}>STOP</button>):(<button onClick={()=>setStop(false)}>START</button>)}
           <input
             type="range"
             min="0"
@@ -258,8 +286,7 @@ function App() {
               display: "block",
               margin: "0 auto",
             }}
-          />
-          </div>
+          /></div>
       )}
         </div>
       </div>
@@ -336,6 +363,7 @@ function App() {
             {/* ノードを描画 */}
             {scaleStatus?nodedata.map((node, index) => {
               if (zoomscale.k < 3) {
+                if(!allview && node[select][yearsnext][monthsnext]!=0)
                 return (
                   <ellipse
                     key={index}
@@ -350,7 +378,6 @@ function App() {
                 );
               } else {
                 if(allview){
-                  
                   const size=nodeScale(alldata[index][select])*5
                 if(clickNode!=null){
                 return (
