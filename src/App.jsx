@@ -420,7 +420,7 @@ function App() {
           <h2>{clickNode.animename}</h2>
           <img src={clickNode.coverImage} alt={clickNode.animename} />
           <h3>あらすじ</h3>
-          <h4>{clickNode.description.replace(/<[^>]*>/g, '')}</h4>
+          <h4>{clickNode.description!=null&&clickNode.description.replace(/<[^>]*>/g, '')}</h4>
           <h3>放送期間：</h3>
           <h3>{clickNode.startDate.year}年 {clickNode.startDate.month}月 {clickNode.startDate.day}日から{clickNode.endDate.year}年 {clickNode.endDate.month}月 {clickNode.endDate.day}日</h3>
           {clickNode.studio.length!=0&&(<h3>スタジオ</h3>)}
