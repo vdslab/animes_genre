@@ -29,7 +29,6 @@ function App() {
       .then((response) => response.json())
       .then((res) => {
         setNodedata(res);
-        console.log(res)
         setScales(scalemake(res));
         setStatus(true);
       });
@@ -37,7 +36,6 @@ function App() {
       .then((response) => response.json())
       .then((res) => {
         setAlldata(res);
-        console.log(res)
       });
   }, []);
 
@@ -141,8 +139,6 @@ function App() {
       .call(zoomRef.current.transform, transform);
   };
 
-  console.log(clickNode)
-
   useEffect(() => {
     if(clickNode!=null){
     const sca = 10; // 新しいズーム倍率
@@ -187,7 +183,7 @@ function App() {
   }, [pagestatus]);
 
   return pagestatus ? (
-    <div className="container">
+    <div className={clickNode!=null?"container1":"container2"}>
       {clickNode==null&&(
       <div className="graph">
         <div className="Box">
@@ -354,59 +350,62 @@ function App() {
                 );
               } else {
                 if(allview){
+                  
+                  const size=nodeScale(alldata[index][select])*5
                 if(clickNode!=null){
                 return (
                   <image
                     key={index}
-                    x={scales.xScale(node.x) - 10} // イメージを中央に配置
-                    y={scales.yScale(node.y) - 10} // イメージを中央に配置
-                    width={nodeScale(alldata[index][select])*5} // サイズ調整
-                    height={nodeScale(alldata[index][select])*5} // サイズ調整
+                    x={scales.xScale(node.x) - size/2} // イメージを中央に配置
+                    y={scales.yScale(node.y) - size/2} // イメージを中央に配置
+                    width={size} // サイズ調整
+                    height={size} // サイズ調整
                     href={node.coverImage}
                     onClick={() => setClickNode(node)}
                     opacity={clickNode==node&&0.65}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer" , clipPath: "circle(35%)"}}
                   />
                 )} else {
                   return(
                     <image
                     key={index}
-                    x={scales.xScale(node.x) - 10} // イメージを中央に配置
-                    y={scales.yScale(node.y) - 10} // イメージを中央に配置
-                    width={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
-                    height={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                    x={scales.xScale(node.x) - size/2} // イメージを中央に配置
+                    y={scales.yScale(node.y) - size/2} // イメージを中央に配置
+                    width={size} // サイズ調整
+                    height={size} // サイズ調整
                     href={node.coverImage}
                     onClick={() => setClickNode(node)}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer",clipPath: "circle(35%)" }}
                   />
                   )
                 }} else {
+                  const size=nodeScale(node[select][yearsnext][monthsnext])*5
                   if(clickNode!=null){
                     return (
                       <image
                         key={index}
-                        x={scales.xScale(node.x) - 10} // イメージを中央に配置
-                        y={scales.yScale(node.y) - 10} // イメージを中央に配置
-                        width={nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
-                        height={nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                        x={scales.xScale(node.x) - size/2} // イメージを中央に配置
+                        y={scales.yScale(node.y) - size/2} // イメージを中央に配置
+                        width={size} // サイズ調整
+                        height={size} // サイズ調整
                         href={node.coverImage}
                         onClick={() => setClickNode(node)}
                         opacity={clickNode==node||node[select][yearsnext][monthsnext]==0&&0.35}
                         
-                        style={{ cursor: "pointer" }}
+                        style={{ cursor: "pointer" ,clipPath: "circle(35%)"}}
                       />
                     )} else {
                       return(
                         <image
                         key={index}
-                        x={scales.xScale(node.x) - 10} // イメージを中央に配置
-                        y={scales.yScale(node.y) - 10} // イメージを中央に配置
-                        width={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
-                        height={allview?nodeScale(alldata[index][select])*5:nodeScale(node[select][yearsnext][monthsnext])*5} // サイズ調整
+                        x={scales.xScale(node.x) - size/2} // イメージを中央に配置
+                        y={scales.yScale(node.y) - size/2} // イメージを中央に配置
+                        width={size} // サイズ調整
+                        height={size} // サイズ調整
                         href={node.coverImage}
                         onClick={() => setClickNode(node)}
                         opacity={node[select][yearsnext][monthsnext]==0&&0.35}
-                        style={{ cursor: "pointer" }}
+                        style={{ cursor: "pointer",clipPath: "circle(35%)" }}
                       />
                       )
                     }
