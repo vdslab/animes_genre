@@ -363,7 +363,7 @@ function App() {
             {/* ノードを描画 */}
             {scaleStatus?nodedata.map((node, index) => {
               if (zoomscale.k < 3) {
-                if(!allview && node[select][yearsnext][monthsnext]!=0)
+                if(!allview && node[select][yearsnext][monthsnext]!=0){
                 return (
                   <ellipse
                     key={index}
@@ -375,7 +375,20 @@ function App() {
                     onClick={()=>setClickNode(node)}
                     style={{ cursor: "pointer" }}
                   ></ellipse>
-                );
+                );} else if(allview){
+                  return (
+                    <ellipse
+                      key={index}
+                      cx={scales.xScale(node.x)}
+                      cy={scales.yScale(node.y)}
+                      rx={nodeScale(alldata[index][select])}
+                      ry={nodeScale(alldata[index][select])}
+                      fill={node.color}
+                      onClick={()=>setClickNode(node)}
+                      style={{ cursor: "pointer" }}
+                    ></ellipse>
+                  );
+                }
               } else {
                 if(allview){
                   const size=nodeScale(alldata[index][select])*5
