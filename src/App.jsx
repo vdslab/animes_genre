@@ -147,6 +147,15 @@ function App() {
 
   useEffect(() => {
     if (clickNode != null) {
+      // const description = clickNode.description;
+      // const feachData = fetch(
+      //   `https://script.google.com/macros/s/AKfycbz6IF2ro8S88fNb8ShK5Zg7C28t5jv2NPeIJ_tN-x-pXewQTyCEy8rKlhU3DP8lim3F/exec(
+      //     description
+      //   )}&source=en&target=ja`
+      // );
+      // let clicked = clickNode;
+      // clicked.description = feachData;
+      // setClickNode(clicked);
       const sca = 10; // 新しいズーム倍率
       const newScale = {
         k: sca,
