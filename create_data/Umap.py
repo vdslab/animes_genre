@@ -95,26 +95,33 @@ def tags():
     mds = umap.UMAP(n_components=2, random_state=42, metric='precomputed')
     anime_mds = mds.fit_transform(dist_matrix)
     filedata=[]
-    for i in range(len(anime_mds)):
+
+# ジッターを追加して重なりを軽減
+    jitter_strength = 0.1  # ジッターの強さ（調整可能）
+    anime_mds_jittered = anime_mds + np.random.normal(0, jitter_strength, anime_mds.shape)
+
+# ジッター後の座標を利用
+    for i in range(len(anime_mds_jittered)):
         filedata.append(
-        {"animename":datas["anime_data"][i]["name"],
-         "coverImage":datas["anime_data"][i]["coverImage"],
-         "x":float(anime_mds[i, 0]),
-         "y":float(anime_mds[i, 1]),
-         "year": datas["anime_data"][i]["year"],
-         "n": datas["anime_data"][i]["n"],
-         "shortname":datas["anime_data"][i]["shortname"],
-         "description":datas["anime_data"][i]["description"],
-         "startDate":datas["anime_data"][i]["startDate"],
-         "endDate":datas["anime_data"][i]["endDate"],
-         "studio":datas["anime_data"][i]["studio"],
-        "link":datas["anime_data"][i]["link"],
-        "viewCount":datas["anime_data"][i]["viewCount"],
-        "likeCount":datas["anime_data"][i]["likeCount"],
-        "commentCount":datas["anime_data"][i]["commentCount"],
-        "videoCount":datas["anime_data"][i]["videoCount"],
-         "color":"blue"
-         })
+    {"animename": datas["anime_data"][i]["name"],
+     "coverImage": datas["anime_data"][i]["coverImage"],
+     "x": float(anime_mds_jittered[i, 0]),  # ジッターを適用したx
+     "y": float(anime_mds_jittered[i, 1]),  # ジッターを適用したy
+     "year": datas["anime_data"][i]["year"],
+     "n": datas["anime_data"][i]["n"],
+     "shortname": datas["anime_data"][i]["shortname"],
+     "description": datas["anime_data"][i]["description"],
+     "startDate": datas["anime_data"][i]["startDate"],
+     "endDate": datas["anime_data"][i]["endDate"],
+     "studio": datas["anime_data"][i]["studio"],
+     "link": datas["anime_data"][i]["link"],
+     "viewCount": datas["anime_data"][i]["viewCount"],
+     "likeCount": datas["anime_data"][i]["likeCount"],
+     "commentCount": datas["anime_data"][i]["commentCount"],
+     "videoCount": datas["anime_data"][i]["videoCount"],
+     "color": "blue"
+    })
+
 
     with open('./public/data/node.json', 'w', encoding='utf-8') as f:
         json.dump(filedata, f, ensure_ascii=False, indent=4)

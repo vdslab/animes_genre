@@ -110,8 +110,8 @@ function App() {
       }
     });
 
-    scale["xScale"] = d3.scaleLinear().domain([xmin, xmax]).range([0, 1000]);
-    scale["yScale"] = d3.scaleLinear().domain([ymin, ymax]).range([0, 1000]);
+    scale["xScale"] = d3.scaleLinear().domain([xmin, xmax]).range([0, 1200]);
+    scale["yScale"] = d3.scaleLinear().domain([ymin, ymax]).range([0, 1200]);
 
     return scale;
   };
@@ -126,13 +126,13 @@ function App() {
 
     let newScale = {
       k: zoomscale.k,
-      x: (-transformPoint.x + 500 / zoomscale.k / 2) * zoomscale.k * 2,
-      y: (-transformPoint.y + 500 / zoomscale.k / 2) * zoomscale.k * 2,
+      x: (-transformPoint.x + 300 / zoomscale.k / 4) * zoomscale.k * 4,
+      y: (-transformPoint.y + 300 / zoomscale.k / 4) * zoomscale.k * 4,
     };
 
     // パンの範囲を制限（画面外に行かないようにする）
-    newScale.x = Math.min(0, Math.max(newScale.x, -1000 * newScale.k + 1000));
-    newScale.y = Math.min(0, Math.max(newScale.y, -1000 * newScale.k + 1000));
+    newScale.x = Math.min(0, Math.max(newScale.x, -1200 * newScale.k + 1200));
+    newScale.y = Math.min(0, Math.max(newScale.y, -1200 * newScale.k + 1200));
 
     // D3 ズームの状態を更新
     const transform = d3.zoomIdentity
@@ -159,8 +159,8 @@ function App() {
       const sca = 10; // 新しいズーム倍率
       const newScale = {
         k: sca,
-        x: -scales.xScale(clickNode.x) * sca + 500, // 中心に持ってくる計算
-        y: -scales.yScale(clickNode.y) * sca + 500,
+        x: -scales.xScale(clickNode.x) * sca + 600, // 中心に持ってくる計算
+        y: -scales.yScale(clickNode.y) * sca + 600,
       };
 
       // D3 ズームの状態を更新
@@ -185,7 +185,7 @@ function App() {
         .scaleExtent([1, 10]) // ズーム倍率の範囲
         .translateExtent([
           [-50, -50],
-          [1050, 1050],
+          [1250, 1250],
         ]) // パン可能な範囲
         .on("zoom", (event) => {
           setZoomscale(event.transform);
@@ -223,125 +223,20 @@ function App() {
   }, [stop, allview, yearsnext, monthsnext]); // sortDataとyearsnextが変更されるたびに最新の値を使う
 
   return pagestatus ? (
-    <div className={clickNode != null ? "container1" : "container2"}>
-      {clickNode == null && (
-        <div className="graph">
-          <div className="Box">
-            <div style={{ textAlign: "center" }}>
-              {/* {stop ? (
-            <img
-              src="start.png"
-              onClick={(e) => {
-                setStop(false);
-              }}
-              style={{ cursor: "pointer" }}
-            />
-          ) : (
-            <img
-              src="stop.png"
-              onClick={(e) => {
-                setStop(true);
-              }}
-              style={{ cursor: "pointer" }}
-            />
-          )} */}
-              <div>
-                <input
-                  type="checkbox"
-                  checked={allview}
-                  onChange={() => {
-                    setScaleStatus(false);
-                    setAllview(!allview);
-                  }}
-                />
-                <label>総合を見る</label>
-              </div>
-              <Select
-                options={nodedata}
-                value={clickNode}
-                getOptionLabel={(option) => option.animename || "Unknown Anime"}
-                onChange={(option) => setClickNode(option)}
-                placeholder="アニメを検索..."
-                filterOption={(option, inputValue) => {
-                  // animename が存在しない場合は空文字列を使用
-                  const animename = (option.data.animename || "")
-                    .toLowerCase()
-                    .includes(inputValue.toLowerCase());
-
-                  // shortname が存在しない場合は空配列を使用
-                  const anime_shortname = (option.data.shortname || [])
-                    .filter((item) => item) // 空文字列や undefined を除外
-                    .some((item) =>
-                      item.toLowerCase().includes(inputValue.toLowerCase())
-                    );
-
-                  return animename || anime_shortname;
-                }}
-              />
-
-              {!allview && (
-                <div>
-                  <h3>
-                    {yearsnext}年{monthsnext}月
-                  </h3>
-                  {!stop ? (
-                    <button onClick={() => setStop(true)}>STOP</button>
-                  ) : (
-                    <button onClick={() => setStop(false)}>START</button>
-                  )}
-                  <input
-                    type="range"
-                    min="0"
-                    max={(years.length - 1) * months.length}
-                    value={
-                      years.findIndex((item) => item === yearsnext) * 12 +
-                      months.findIndex((item) => item === monthsnext)
-                    }
-                    onChange={(e) => {
-                      setScaleStatus(false);
-                      setYearsnext(
-                        years[(e.target.value - (e.target.value % 12)) / 12]
-                      );
-                      setMonthsnext(months[e.target.value % 12]);
-                    }}
-                    style={{
-                      width: "300px",
-                      display: "block",
-                      margin: "0 auto",
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <select
-              style={{
-                display: "block",
-                margin: "10px auto",
-                padding: "10px 15px",
-              }}
-              onChange={(e) => setSelect(e.target.value)}
-            >
-              <option value="videoCount">総動画数</option>
-              <option value="viewCount">総視聴回数</option>
-              <option value="likeCount">総いいね数</option>
-              <option value="commentCount">総コメント数</option>
-            </select>
-          </div>
+    <div className="container">
+        <div className="mini_graph">
           <svg
-            width="500"
-            height="500"
+            width="300"
+            height="300"
             onClick={handleSvgClick}
-            style={{ cursor: "pointer" }}
+            style={{cursor:"pointer"}}
           >
             <g>
               <rect
-                x={-zoomscale.x / 2 / zoomscale.k}
-                y={-zoomscale.y / 2 / zoomscale.k}
-                width={500 / zoomscale.k}
-                height={500 / zoomscale.k}
+                x={-zoomscale.x / 4 / zoomscale.k}
+                y={-zoomscale.y / 4 / zoomscale.k}
+                width={300 / zoomscale.k}
+                height={300 / zoomscale.k}
                 fill="grey"
                 stroke="red"
                 strokeWidth={5}
@@ -354,19 +249,17 @@ function App() {
                       return (
                         <ellipse
                           key={index}
-                          cx={scales.xScale(node.x) / 2}
-                          cy={scales.yScale(node.y) / 2}
+                          cx={scales.xScale(node.x) / 4}
+                          cy={scales.yScale(node.y) / 4}
                           rx={
                             allview
-                              ? nodeScale(alldata[index][select]) / 2
-                              : nodeScale(node[select][yearsnext][monthsnext]) /
-                                2
+                              ? nodeScale(alldata[index][select]) / 4
+                              : nodeScale(node[select][yearsnext][monthsnext]) / 4
                           }
                           ry={
                             allview
-                              ? nodeScale(alldata[index][select]) / 2
-                              : nodeScale(node[select][yearsnext][monthsnext]) /
-                                2
+                              ? nodeScale(alldata[index][select]) / 4
+                              : nodeScale(node[select][yearsnext][monthsnext]) / 4
                           }
                           fill={node.color}
                         ></ellipse>
@@ -376,17 +269,17 @@ function App() {
                     return (
                       <ellipse
                         key={index}
-                        cx={scales.xScale(node.x) / 2}
-                        cy={scales.yScale(node.y) / 2}
+                        cx={scales.xScale(node.x) / 4}
+                        cy={scales.yScale(node.y) / 4}
                         rx={
                           allview
-                            ? nodeScale(alldata[index][select]) / 2
-                            : nodeScale(node[select][yearsnext][monthsnext]) / 2
+                            ? nodeScale(alldata[index][select]) / 4
+                            : nodeScale(node[select][yearsnext][monthsnext]) / 4
                         }
                         ry={
                           allview
-                            ? nodeScale(alldata[index][select]) / 2
-                            : nodeScale(node[select][yearsnext][monthsnext]) / 2
+                            ? nodeScale(alldata[index][select]) / 4
+                            : nodeScale(node[select][yearsnext][monthsnext]) / 4
                         }
                         fill={node.color}
                       ></ellipse>
@@ -399,12 +292,11 @@ function App() {
             </g>
           </svg>
         </div>
-      )}
       <div className="graph">
         <svg
           ref={svgRef}
-          width="1000"
-          height="1000"
+          width="1200"
+          height="1200"
           style={{ top: 20, right: 30, bottom: 30, left: 40 }}
         >
           <g>
@@ -524,8 +416,113 @@ function App() {
           </g>
         </svg>
       </div>
-      {clickNode != null && (
         <div className="click_After">
+          <div className="Box">
+            <div style={{ textAlign: "center" }}>
+              {/* {stop ? (
+            <img
+              src="start.png"
+              onClick={(e) => {
+                setStop(false);
+              }}
+              style={{ cursor: "pointer" }}
+            />
+          ) : (
+            <img
+              src="stop.png"
+              onClick={(e) => {
+                setStop(true);
+              }}
+              style={{ cursor: "pointer" }}
+            />
+          )} */}
+              <div>
+                <input
+                  type="checkbox"
+                  checked={allview}
+                  onChange={() => {
+                    setScaleStatus(false);
+                    setAllview(!allview);
+                  }}
+                />
+                <label>総合を見る</label>
+              </div>
+              <Select
+                options={nodedata}
+                value={clickNode}
+                getOptionLabel={(option) => option.animename || "Unknown Anime"}
+                onChange={(option) => setClickNode(option)}
+                placeholder="アニメを検索..."
+                filterOption={(option, inputValue) => {
+                  // animename が存在しない場合は空文字列を使用
+                  const animename = (option.data.animename || "")
+                    .toLowerCase()
+                    .includes(inputValue.toLowerCase());
+
+                  // shortname が存在しない場合は空配列を使用
+                  const anime_shortname = (option.data.shortname || [])
+                    .filter((item) => item) // 空文字列や undefined を除外
+                    .some((item) =>
+                      item.toLowerCase().includes(inputValue.toLowerCase())
+                    );
+
+                  return animename || anime_shortname;
+                }}
+              />
+              </div>
+
+              {!allview && (
+                <div>
+                  <h3>
+                    {yearsnext}年{monthsnext}月
+                  </h3>
+                  {!stop ? (
+                    <button onClick={() => setStop(true)}>STOP</button>
+                  ) : (
+                    <button onClick={() => setStop(false)}>START</button>
+                  )}
+                  <input
+                    type="range"
+                    min="0"
+                    max={(years.length - 1) * months.length}
+                    value={
+                      years.findIndex((item) => item === yearsnext) * 12 +
+                      months.findIndex((item) => item === monthsnext)
+                    }
+                    onChange={(e) => {
+                      setScaleStatus(false);
+                      setYearsnext(
+                        years[(e.target.value - (e.target.value % 12)) / 12]
+                      );
+                      setMonthsnext(months[e.target.value % 12]);
+                    }}
+                    style={{
+                      width: "300px",
+                      display: "block",
+                      margin: "0 auto",
+                    }}
+                  />
+                </div>
+              )}
+          </div>
+
+          <div>
+            <select
+              style={{
+                display: "block",
+                margin: "10px auto",
+                padding: "10px 15px",
+              }}
+              onChange={(e) => setSelect(e.target.value)}
+            >
+              <option value="videoCount">総動画数</option>
+              <option value="viewCount">総視聴回数</option>
+              <option value="likeCount">総いいね数</option>
+              <option value="commentCount">総コメント数</option>
+            </select>
+          </div>
+          {clickNode != null && (
+            <div>
           <h2>{clickNode.animename}</h2>
           <img src={clickNode.coverImage} alt={clickNode.animename} />
           <h3>あらすじ</h3>
@@ -557,7 +554,7 @@ function App() {
             閉じる
           </button>
         </div>
-      )}
+      )}</div>
       <div></div>
     </div>
   ) : (

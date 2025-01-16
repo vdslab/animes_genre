@@ -1,14 +1,18 @@
-.container1 {
+.container{
   display: flex; /* 子要素を横並びに配置 */
   justify-content: space-around; /* 子要素間のスペースを均等に配置 */
-  align-items: flex-start; /* 子要素の上端を揃える */
+  align-items: flex-start; /* 子要素を垂直方向に中央揃え */
   margin-top: 20px; /* 上部に少しスペース */
 }
-.container2 {
-  display: flex; /* 子要素を横並びに配置 */
-  justify-content: space-around; /* 子要素間のスペースを均等に配置 */
-  align-items: center; /* 子要素を垂直方向に中央揃え */
-  margin-top: 20px; /* 上部に少しスペース */
+.mini_graph svg{
+  border: 1px solid #ccc; /* グラフの枠線 */
+  border-radius: 5px; /* 角を丸くする */
+  padding: 10px; /* グラフ内部のスペース */
+  background-color: #f9f9f9; /* 背景色 */
+  background: rgba(100, 100, 100, .8);
+  z-index: 2147483647;
+  cursor: "pointer";
+  position: absolute;
 }
 
 .graph {
