@@ -150,29 +150,30 @@ function App() {
 
   useEffect(() => {
     if (clickNode != null) {
-      // const description = clickNode.description;
+      const description = clickNode.description.replace(/<[^>]*>/g, "");
 
-      // // 非同期関数内で `await` を使用する
-      // (async () => {
-      //   try {
-      //     // `fetch` の呼び出しでデータを取得
-      //     const response = await fetch(
-      //       `https://script.google.com/macros/s/AKfycbwfIUWVJumH7Ux8HIttAx5ducAX-hthb5OxKd6UNZNK3j2MCaT2AEVzYNia4qjOxAhP/exec?text=${description}&source=en&target=ja`
-      //     );
+      // 非同期関数内で `await` を使用する
+      (async () => {
+        try {
+          // `fetch` の呼び出しでデータを取得
+          const response = await fetch(
+            `https://script.google.com/macros/s/AKfycbxwZewBANl5EuM-pnpbTgMwGryNhDapa3aTYCtBSFf5XIOVzgPmSTTxkiw8bj2fChl-AA/exec?text=${description}&source=en&target=ja`
+          );
 
-      //     // 取得したレスポンスを JSON として解析
-      //     const feachData = await response.json();
+          // 取得したレスポンスを JSON として解析
+          const feachData = await response.json();
 
-      //     // 更新するオブジェクトを作成
-      //     const clicked = { ...clickNode };
-      //     clicked.description = feachData;
+          // 更新するオブジェクトを作成
+          const clicked = { ...clickNode };
 
-      //     // 状態を更新
-      //     setClickNode(clicked);
-      //   } catch (error) {
-      //     console.error("Error fetching data:", error);
-      //   }
-      // })();
+          clicked.description = feachData.text;
+
+          // 状態を更新
+          setClickNode(clicked);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      })();
 
       const sca = 10; // 新しいズーム倍率
       const newScale = {
