@@ -4,7 +4,7 @@
   align-items: flex-start; /* 子要素を垂直方向に中央揃え */
   margin-top: 20px; /* 上部に少しスペース */
 }
-.mini_graph svg{
+.mini_graph canvas{
   border: 1px solid #ccc; /* グラフの枠線 */
   border-radius: 5px; /* 角を丸くする */
   padding: 10px; /* グラフ内部のスペース */

@@ -113,29 +113,27 @@ function App() {
       }
     });
 
-    scale["xScale"] = d3.scaleLinear().domain([xmin, xmax]).range([0, 1200]);
-    scale["yScale"] = d3.scaleLinear().domain([ymin, ymax]).range([0, 1200]);
+    scale["xScale"] = d3.scaleLinear().domain([xmin, xmax]).range([-50, 1250]);
+    scale["yScale"] = d3.scaleLinear().domain([ymin, ymax]).range([-50, 1250]);
 
     return scale;
   };
   const handleSvgClick = (event) => {
-    const svg = event.currentTarget;
-    const point = svg.createSVGPoint();
-    point.x = event.clientX;
-    point.y = event.clientY;
+    const canvas = event.currentTarget;
+    const rect = canvas.getBoundingClientRect(); // Canvasの位置とサイズを取得
+    const x = event.clientX - rect.left; // Canvas内のクリック位置のx座標
+    const y = event.clientY - rect.top; // Canvas内のクリック位置のy座標
 
-    // クリック位置を SVG 座標系に変換
-    const transformPoint = point.matrixTransform(svg.getScreenCTM().inverse());
-
-    let newScale = {
+    // ズームとパンの新しいスケールを計算
+    const newScale = {
       k: zoomscale.k,
-      x: (-transformPoint.x + 300 / zoomscale.k / 4) * zoomscale.k * 4,
-      y: (-transformPoint.y + 300 / zoomscale.k / 4) * zoomscale.k * 4,
+      x: (-x + 300 / zoomscale.k / 4) * zoomscale.k * 4, // パンの計算
+      y: (-y + 300 / zoomscale.k / 4) * zoomscale.k * 4, // パンの計算
     };
 
     // パンの範囲を制限（画面外に行かないようにする）
-    newScale.x = Math.min(0, Math.max(newScale.x, -1200 * newScale.k + 1200));
-    newScale.y = Math.min(0, Math.max(newScale.y, -1200 * newScale.k + 1200));
+    newScale.x = Math.min(0, Math.max(newScale.x, -1250 * newScale.k + 1250));
+    newScale.y = Math.min(0, Math.max(newScale.y, -1250 * newScale.k + 1250));
 
     // D3 ズームの状態を更新
     const transform = d3.zoomIdentity
