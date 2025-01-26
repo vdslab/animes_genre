@@ -1,8 +1,7 @@
-// //<div className="Graph">を分けた
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import * as d3 from "d3";
 
 const Graph = ({
-  svgRef,
   scaleStatus,
   nodedata,
   zoomscale,
@@ -16,139 +15,77 @@ const Graph = ({
   setClickNode,
   clickNode,
 }) => {
+  const canvasRef = useRef(null); // Canvas要素の参照
 
   useEffect(() => {
-      if(scaleStatus){
-      const canvas = document.getElementById("myCanvas");
+    if (scaleStatus && nodedata.length > 0) {
+      const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
-  
-      // キャンバスをクリア
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-      // ノードデータの描画
-      nodedata.map((node,index) => {
-        console.log(scales.xScale(node.x),
-        scales.yScale(node.y) ,
-        nodeScale(node[select][yearsnext][monthsnext]) / 4,)
-        ctx.beginPath(); // 新しいパスを開始
-  
-        if (!allview) {
-          // allviewがfalseの場合、データが0でない場合のみ描画
-          if (node[select][yearsnext][monthsnext] !== 0) {
-            
-            ctx.arc(
-              scales.xScale(node.x) / 4,
-              scales.yScale(node.y) / 4,
-              nodeScale(node[select][yearsnext][monthsnext]) / 4,
-              0,
-              Math.PI * 2
-            );
-          }
-        } else {
-          // allviewがtrueの場合、すべて描画
-          ctx.arc(
-            scales.xScale(node.x) / 4,
-            scales.yScale(node.y) / 4,
-            nodeScale(alldata[index][select]) / 4,
-            0,
-            Math.PI * 2
-          );
-        }
-  
-        ctx.fillStyle = "blue"; // 塗りつぶしの色
-        ctx.fill(); // 塗りつぶし
-        ctx.closePath(); // パスを閉じる
-      });
+      const width = canvas.width;
+      const height = canvas.height;
+
+      // // D3 Force Simulation
+      const simulation = d3
+        .forceSimulation(alldata) // ノードデータを使用
+        .force("charge", d3.forceManyBody().strength(-30)) // 斥力
+        .force("center", d3.forceCenter(width / 2, height / 2)) // 中央に引き寄せ
+        .force(
+          "collide",
+          d3.forceCollide((node) => nodeScale(node[select]) )
+        ) // ノード間の衝突防止
+        .on("tick", ticked); // シミュレーションの更新
+
+      // ノードの描画関数
+      function ticked(){
+        // Canvasをクリア
+        ctx.clearRect(0, 0, width, height);
+
+        nodedata.forEach((node,index) => {
+          const x = scales.xScale(node.x);
+          const y = scales.yScale(node.y);
+          const radius = allview
+            ? nodeScale(alldata[index][select])
+            : nodeScale(node[select][yearsnext][monthsnext]) ;
+
+          // ノードを描画
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fillStyle = "blue"; // 塗りつぶしの色
+          ctx.fill(); // 塗りつぶし
+          ctx.closePath();
+        });
+    
+      }
+      console.log(simulation)
+      // // シミュレーション開始
+      simulation.alpha(1).restart();
+
+      // アンマウント時にシミュレーションを停止
+      return () => {
+        simulation.stop();
+      };
     }
-    }, [
-      nodedata,
-      zoomscale,
-      scales,
-      nodeScale,
-      allview,
-      select,
-      yearsnext,
-      monthsnext,
-    ]); // 依存関係を追加して再描画を行う
+  }, [
+    scaleStatus,
+    nodedata,
+    zoomscale,
+    scales,
+    nodeScale,
+    allview,
+    select,
+    yearsnext,
+    monthsnext,
+    alldata,
+  ]);
+
   return (
     <div className="graph">
-      <svg
-        ref={svgRef}
+      <canvas
+        ref={canvasRef}
         width="1200"
         height="1200"
-        style={{ top: 20, right: 30, bottom: 30, left: 40 }}
-      >
-        <g>
-          {/* ノードを描画 */}
-          {scaleStatus ? (
-            nodedata.map((node, index) => {
-              if (zoomscale.k < 3) {
-                if (!allview && node[select][yearsnext][monthsnext] !== 0) {
-                  return (
-                    <ellipse
-                      key={index}
-                      cx={scales.xScale(node.x)}
-                      cy={scales.yScale(node.y)}
-                      rx={
-                        allview
-                          ? nodeScale(alldata[index][select])
-                          : nodeScale(node[select][yearsnext][monthsnext])
-                      }
-                      ry={
-                        allview
-                          ? nodeScale(alldata[index][select])
-                          : nodeScale(node[select][yearsnext][monthsnext])
-                      }
-                      fill={node.color}
-                      onClick={() => setClickNode(node)}
-                      style={{ cursor: "pointer" }}
-                    ></ellipse>
-                  );
-                } else if (allview) {
-                  return (
-                    <ellipse
-                      key={index}
-                      cx={scales.xScale(node.x)}
-                      cy={scales.yScale(node.y)}
-                      rx={nodeScale(alldata[index][select])}
-                      ry={nodeScale(alldata[index][select])}
-                      fill={node.color}
-                      onClick={() => setClickNode(node)}
-                      style={{ cursor: "pointer" }}
-                    ></ellipse>
-                  );
-                }
-              } else {
-                const size = allview
-                  ? nodeScale(alldata[index][select]) * 5
-                  : nodeScale(node[select][yearsnext][monthsnext]) * 5;
-                const isNodeSelected = clickNode === node;
-                const opacity =
-                  isNodeSelected ||
-                  (!allview && node[select][yearsnext][monthsnext] === 0)
-                    ? 0.35
-                    : 1;
-
-                return (
-                  <image
-                    key={index}
-                    x={scales.xScale(node.x) - size / 2} // イメージを中央に配置
-                    y={scales.yScale(node.y) - size / 2} // イメージを中央に配置
-                    width={size} // サイズ調整
-                    height={size} // サイズ調整
-                    href={node.coverImage}
-                    onClick={() => setClickNode(node)}
-                    opacity={opacity}
-                    style={{ cursor: "pointer", clipPath: "circle(35%)" }}
-                  />
-                );
-              }
-            })
-          ) : (
-            <div>少々お待ちください</div>
-          )}
-        </g>
-      </svg>
+        style={{ border: "1px solid #ccc", display: "block", margin: "0 auto" }}
+      ></canvas>
     </div>
   );
 };
