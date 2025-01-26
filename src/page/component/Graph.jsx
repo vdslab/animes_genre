@@ -1,5 +1,4 @@
-// //<div className="Graph">を分けた
-import React from "react";
+import React, { useEffect } from "react";
 
 const Graph = ({
   svgRef,
@@ -16,85 +15,71 @@ const Graph = ({
   setClickNode,
   clickNode,
 }) => {
+
+  // クリックイベントの処理
+  const handleCanvasClick = (e) => {
+    const canvas = document.getElementById("Canvas");
+    const rect = canvas.getBoundingClientRect(); // キャンバスの位置とサイズを取得
+    const x = e.clientX - rect.left; // マウスのX座標（キャンバス内での位置）
+    const y = e.clientY - rect.top;  // マウスのY座標（キャンバス内での位置）
+
+    // ノードを1つ1つチェックして、クリックが円内かどうか判定
+    nodedata.forEach((node, index) => {
+      const nodeX = scales.xScale(node.x);
+      const nodeY = scales.yScale(node.y);
+      const radius = allview
+        ? nodeScale(alldata[index][select]) // allviewがtrueならalldataを使用
+        : nodeScale(node[select][yearsnext][monthsnext]); // 否なら、選択されたデータを使用
+
+      // クリック位置が円内かどうかを確認
+      const distance = Math.sqrt(Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2));
+      if (distance <= radius) {
+        setClickNode(node); // クリックされたノードを設定
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (scaleStatus) {
+      const canvas = document.getElementById("Canvas");
+      const ctx = canvas.getContext("2d");
+
+      // キャンバスをクリア
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // ノードの描画
+      nodedata.map((node, index) => {
+        const nodeX = scales.xScale(node.x);
+        const nodeY = scales.yScale(node.y);
+        const radius = allview
+          ? nodeScale(alldata[index][select])
+          : nodeScale(node[select][yearsnext][monthsnext]);
+
+        ctx.beginPath();
+        ctx.arc(nodeX, nodeY, radius, 0, Math.PI * 2);
+        ctx.fillStyle = "blue";
+        ctx.fill();
+        ctx.closePath();
+      });
+
+      // クリックイベントリスナーを追加
+      canvas.addEventListener("click", handleCanvasClick);
+    }
+
+    // クリーンアップ: コンポーネントがアンマウントされる際にイベントリスナーを削除
+    return () => {
+      const canvas = document.getElementById("Canvas");
+      canvas.removeEventListener("click", handleCanvasClick);
+    };
+  }, [nodedata, zoomscale, scales, nodeScale, allview, select, yearsnext, monthsnext, scaleStatus]);
+
   return (
     <div className="graph">
-      <svg
-        ref={svgRef}
-        width="1200"
-        height="1200"
-        style={{ top: 20, right: 30, bottom: 30, left: 40 }}
-      >
-        <g>
-          {/* ノードを描画 */}
-          {scaleStatus ? (
-            nodedata.map((node, index) => {
-              if (zoomscale.k < 3) {
-                if (!allview && node[select][yearsnext][monthsnext] !== 0) {
-                  return (
-                    <ellipse
-                      key={index}
-                      cx={scales.xScale(node.x)}
-                      cy={scales.yScale(node.y)}
-                      rx={
-                        allview
-                          ? nodeScale(alldata[index][select])
-                          : nodeScale(node[select][yearsnext][monthsnext])
-                      }
-                      ry={
-                        allview
-                          ? nodeScale(alldata[index][select])
-                          : nodeScale(node[select][yearsnext][monthsnext])
-                      }
-                      fill={node.color}
-                      onClick={() => setClickNode(node)}
-                      style={{ cursor: "pointer" }}
-                    ></ellipse>
-                  );
-                } else if (allview) {
-                  return (
-                    <ellipse
-                      key={index}
-                      cx={scales.xScale(node.x)}
-                      cy={scales.yScale(node.y)}
-                      rx={nodeScale(alldata[index][select])}
-                      ry={nodeScale(alldata[index][select])}
-                      fill={node.color}
-                      onClick={() => setClickNode(node)}
-                      style={{ cursor: "pointer" }}
-                    ></ellipse>
-                  );
-                }
-              } else {
-                const size = allview
-                  ? nodeScale(alldata[index][select]) * 5
-                  : nodeScale(node[select][yearsnext][monthsnext]) * 5;
-                const isNodeSelected = clickNode === node;
-                const opacity =
-                  isNodeSelected ||
-                  (!allview && node[select][yearsnext][monthsnext] === 0)
-                    ? 0.35
-                    : 1;
-
-                return (
-                  <image
-                    key={index}
-                    x={scales.xScale(node.x) - size / 2} // イメージを中央に配置
-                    y={scales.yScale(node.y) - size / 2} // イメージを中央に配置
-                    width={size} // サイズ調整
-                    height={size} // サイズ調整
-                    href={node.coverImage}
-                    onClick={() => setClickNode(node)}
-                    opacity={opacity}
-                    style={{ cursor: "pointer", clipPath: "circle(35%)" }}
-                  />
-                );
-              }
-            })
-          ) : (
-            <div>少々お待ちください</div>
-          )}
-        </g>
-      </svg>
+      {scaleStatus ? (
+        <canvas id="Canvas" width="1200" height="1200"></canvas>
+      ) : (
+        <div>少々お待ちください</div>
+      )}
     </div>
   );
 };
