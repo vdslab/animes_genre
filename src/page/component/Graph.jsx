@@ -27,8 +27,9 @@ const Graph = ({
       // D3 Force Simulation
       const simulation = d3
         .forceSimulation(nodedata) // ノードデータを使用
-        .force("charge", d3.forceManyBody().strength(10)) // 斥力
-        .force("center", d3.forceCenter(width / 2, height / 2).strength(0.5)) // 中央に引き寄せ
+        .force("charge", d3.forceManyBody().strength(-0.15)) // 斥力を小さく
+        .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1)) // 中央引き寄せを弱める
+
         .force(
           "collide",
           d3.forceCollide((node,index) =>
@@ -50,9 +51,6 @@ function ticked() {
     let x = node.x; // シミュレーションで決定されたx座標
     let y = node.y; // シミュレーションで決定されたy座標
 
-    // x, y 座標をキャンバス内に収める
-    x = Math.max(0, Math.min(width, x)); // x座標を0～widthの範囲に制限
-    y = Math.max(0, Math.min(height, y)); // y座標を0～heightの範囲に制限
 
     const radius = allview
       ? nodeScale(alldata[index][select])
