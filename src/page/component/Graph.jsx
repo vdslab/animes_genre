@@ -41,8 +41,8 @@ const Graph = ({
         ctx.clearRect(0, 0, width, height);
 
         nodedata.forEach((node,index) => {
-          const x = node.x;
-          const y = node.y;
+          const x = scales.xScale(node.x);
+          const y = scales.yScale(node.y);
           const radius = allview
             ? nodeScale(alldata[index][select])
             : nodeScale(node[select][yearsnext][monthsnext]) ;
