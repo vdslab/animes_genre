@@ -26,12 +26,12 @@ const Graph = ({
 
       // // D3 Force Simulation
       const simulation = d3
-        .forceSimulation(alldata) // ノードデータを使用
-        .force("charge", d3.forceManyBody().strength(-30)) // 斥力
-        .force("center", d3.forceCenter(width / 2, height / 2)) // 中央に引き寄せ
+        .forceSimulation(allview?alldata:nodedata) // ノードデータを使用
+        .force("charge", d3.forceManyBody().strength(-100)) // 斥力
+        .force("center", d3.forceCenter(width , height)) // 中央に引き寄せ
         .force(
           "collide",
-          d3.forceCollide((node) => nodeScale(node[select]) )
+          d3.forceCollide((node) => allview?nodeScale(node[select]):nodeScale(node[select][yearsnext][monthsnext] ))
         ) // ノード間の衝突防止
         .on("tick", ticked); // シミュレーションの更新
 
@@ -41,8 +41,8 @@ const Graph = ({
         ctx.clearRect(0, 0, width, height);
 
         nodedata.forEach((node,index) => {
-          const x = scales.xScale(node.x);
-          const y = scales.yScale(node.y);
+          const x = node.x;
+          const y = node.y;
           const radius = allview
             ? nodeScale(alldata[index][select])
             : nodeScale(node[select][yearsnext][monthsnext]) ;
