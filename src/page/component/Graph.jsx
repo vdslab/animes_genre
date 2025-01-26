@@ -24,40 +24,51 @@ const Graph = ({
       const width = canvas.width;
       const height = canvas.height;
 
-      // // D3 Force Simulation
+      // D3 Force Simulation
       const simulation = d3
-        .forceSimulation(allview?alldata:nodedata) // ノードデータを使用
-        .force("charge", d3.forceManyBody().strength(-100)) // 斥力
-        .force("center", d3.forceCenter(width , height)) // 中央に引き寄せ
+        .forceSimulation(nodedata) // ノードデータを使用
+        .force("charge", d3.forceManyBody().strength(10)) // 斥力
+        .force("center", d3.forceCenter(width / 2, height / 2).strength(0.5)) // 中央に引き寄せ
         .force(
           "collide",
-          d3.forceCollide((node) => allview?nodeScale(node[select]):nodeScale(node[select][yearsnext][monthsnext] ))
+          d3.forceCollide((node,index) =>
+            allview
+              ? nodeScale(alldata[index][select])/2
+              : nodeScale(node[select][yearsnext][monthsnext])/2
+          )
         ) // ノード間の衝突防止
         .on("tick", ticked); // シミュレーションの更新
 
       // ノードの描画関数
-      function ticked(){
-        // Canvasをクリア
-        ctx.clearRect(0, 0, width, height);
+      // ノードの描画関数
+function ticked() {
+  // Canvasをクリア
+  ctx.clearRect(0, 0, width, height);
 
-        nodedata.forEach((node,index) => {
-          const x = scales.xScale(node.x);
-          const y = scales.yScale(node.y);
-          const radius = allview
-            ? nodeScale(alldata[index][select])
-            : nodeScale(node[select][yearsnext][monthsnext]) ;
+  // ノードを描画
+  nodedata.forEach((node, index) => {
+    let x = node.x; // シミュレーションで決定されたx座標
+    let y = node.y; // シミュレーションで決定されたy座標
 
-          // ノードを描画
-          ctx.beginPath();
-          ctx.arc(x, y, radius, 0, Math.PI * 2);
-          ctx.fillStyle = "blue"; // 塗りつぶしの色
-          ctx.fill(); // 塗りつぶし
-          ctx.closePath();
-        });
-    
-      }
-      console.log(simulation)
-      // // シミュレーション開始
+    // x, y 座標をキャンバス内に収める
+    x = Math.max(0, Math.min(width, x)); // x座標を0～widthの範囲に制限
+    y = Math.max(0, Math.min(height, y)); // y座標を0～heightの範囲に制限
+
+    const radius = allview
+      ? nodeScale(alldata[index][select])
+      : nodeScale(node[select][yearsnext][monthsnext]);
+
+    // ノードを描画
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fillStyle = "blue"; // 塗りつぶしの色
+    ctx.fill(); // 塗りつぶし
+    ctx.closePath();
+  });
+}
+
+
+      // シミュレーション開始
       simulation.alpha(1).restart();
 
       // アンマウント時にシミュレーションを停止

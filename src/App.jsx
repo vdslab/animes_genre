@@ -8,6 +8,7 @@ import "./page/app.css";
 function App() {
   const [pagestatus, setStatus] = useState(false);
   const [nodedata, setNodedata] = useState([]);
+  const [mininodeData,setMininodeData]=useState([])
   const [scales, setScales] = useState({});
   const svgRef = useRef(null); // SVG を参照するための useRef
   const zoomRef = useRef(null);
@@ -46,7 +47,6 @@ function App() {
     fetch("../data/node.json")
       .then((response) => response.json())
       .then((res) => {
-        setNodedata(res);
         setScales(scalemake(res));
         setStatus(true);
       });
@@ -91,6 +91,7 @@ function App() {
   }, [alldata, allview, select, yearsnext, monthsnext]);
 
   const scalemake = (data) => {
+    console.log(1)
     let scale = {};
     // 座標のスケール
     let xmax = data[0].x;
@@ -113,9 +114,16 @@ function App() {
       }
     });
 
-    scale["xScale"] = d3.scaleLinear().domain([xmin, xmax]).range([-50, 1250]);
-    scale["yScale"] = d3.scaleLinear().domain([ymin, ymax]).range([-50, 1250]);
-
+    scale["xScale"] = d3.scaleLinear().domain([xmin, xmax]).range([0, 1200]);
+    scale["yScale"] = d3.scaleLinear().domain([ymin, ymax]).range([0, 1200]);
+    
+    data.map((node)=>{
+      node.x=scale["xScale"](node.x)
+      node.y=scale["yScale"](node.y)
+    })
+    console.log("1")
+    setNodedata(data)
+    setMininodeData(data)
     return scale;
   };
   const handleSvgClick = (event) => {
@@ -219,7 +227,7 @@ function App() {
     <div className="container">
       <MiniGraph
         zoomscale={zoomscale}
-        nodedata={nodedata}
+        nodedata={mininodeData}
         scales={scales}
         nodeScale={nodeScale}
         allview={allview}

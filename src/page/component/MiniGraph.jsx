@@ -13,6 +13,7 @@ const MiniGraph = ({
   scaleStatus,
   handleSvgClick,
 }) => {
+  const nodes=nodedata
   useEffect(() => {
     if(scaleStatus){
     const canvas = document.getElementById("myCanvas");
@@ -22,7 +23,7 @@ const MiniGraph = ({
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // ノードデータの描画
-    nodedata.map((node,index) => {
+    nodes.map((node,index) => {
       ctx.beginPath(); // 新しいパスを開始
 
       if (!allview) {
@@ -30,8 +31,8 @@ const MiniGraph = ({
         if (node[select][yearsnext][monthsnext] !== 0) {
           
           ctx.arc(
-            scales.xScale(node.x) / 4,
-            scales.yScale(node.y) / 4,
+            node.x / 4,
+            node.y / 4,
             nodeScale(node[select][yearsnext][monthsnext]) / 4,
             0,
             Math.PI * 2
@@ -40,8 +41,8 @@ const MiniGraph = ({
       } else {
         // allviewがtrueの場合、すべて描画
         ctx.arc(
-          scales.xScale(node.x) / 4,
-          scales.yScale(node.y) / 4,
+          node.x / 4,
+          node.y / 4,
           nodeScale(alldata[index][select]) / 4,
           0,
           Math.PI * 2
