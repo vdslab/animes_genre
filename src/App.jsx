@@ -165,6 +165,7 @@ function App() {
         .duration(750)
         .call(zoomRef.current.transform, transform);
     }
+    console.log(clickNode)
   }, [clickNode]);
 
   useEffect(() => {

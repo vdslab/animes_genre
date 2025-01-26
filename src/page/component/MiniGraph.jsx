@@ -23,9 +23,6 @@ const MiniGraph = ({
 
     // ノードデータの描画
     nodedata.map((node,index) => {
-      console.log(scales.xScale(node.x) / 4,
-      scales.yScale(node.y) / 4,
-      nodeScale(node[select][yearsnext][monthsnext]) / 4,)
       ctx.beginPath(); // 新しいパスを開始
 
       if (!allview) {
