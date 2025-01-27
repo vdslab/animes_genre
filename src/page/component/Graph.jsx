@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef,useState } from "react";
 import * as d3 from "d3";
 import MiniGraph from "./MiniGraph";
 const Graph = ({
@@ -17,6 +17,29 @@ const Graph = ({
   handleSvgClick,
 }) => {
   const canvasRef = useRef(null); // Canvas要素の参照
+  const [zoomLevel, setZoomLevel] = useState(1); // ズームレベルの状態
+  const [offset, setOffset] = useState({ x: 0, y: 0 }); // オフセット（平行移動の位置）
+  const handleCanvasClick = (e) => {
+    const canvas = document.getElementById("Canvas");
+    const rect = canvas.getBoundingClientRect(); // キャンバスの位置とサイズを取得
+    const x = e.clientX - rect.left; // マウスのX座標（キャンバス内での位置）
+    const y = e.clientY - rect.top;  // マウスのY座標（キャンバス内での位置）
+    console.log(x,y)
+    // ノードを1つ1つチェックして、クリックが円内かどうか判定
+    nodedata.forEach((node, index) => {
+      const nodeX = node.x;
+      const nodeY = node.y;
+      const radius = allview
+        ? nodeScale(alldata[index][select]) // allviewがtrueならalldataを使用
+        : nodeScale(node[select][yearsnext][monthsnext]); // 否なら、選択されたデータを使用
+
+      // クリック位置が円内かどうかを確認
+      const distance = Math.sqrt(Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2));
+      if (distance <= radius) {
+        setClickNode(node); // クリックされたノードを設定
+      }
+    });
+  };
 
   useEffect(() => {
     if (scaleStatus && nodedata.length > 0) {
@@ -63,6 +86,7 @@ function ticked() {
     ctx.fillStyle = "blue"; // 塗りつぶしの色
     ctx.fill(); // 塗りつぶし
     ctx.closePath();
+    
   });
 }
 
@@ -79,6 +103,7 @@ function ticked() {
   useEffect(() => {
       if(scaleStatus){
       const canvas = document.getElementById("Canvas");
+      canvas.addEventListener("click", handleCanvasClick);
       const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
   
       // キャンバスをクリア
@@ -115,7 +140,12 @@ function ticked() {
         ctx.fill(); // 塗りつぶし
         ctx.closePath(); // パスを閉じる
       });
+      return () => {
+        // クリーンアップ時にイベントリスナーを削除
+        canvas.removeEventListener("click", handleCanvasClick);
+      };
     }
+    
     }, [
       nodedata,
       zoomscale,
@@ -125,8 +155,67 @@ function ticked() {
       select,
       yearsnext,
       monthsnext,
+      zoomLevel,
+      offset,
     ]); // 依存関係を追加して再描画を行う
-
+    useEffect(() => {
+      const canvasDiv = document.querySelector(".graph");
+  
+      const handleWheel = (e) => {
+        e.preventDefault();
+        const canvas = canvasRef.current;
+        const rect = canvas.getBoundingClientRect();
+  
+        // マウスカーソルの位置を取得
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+  
+        // ズーム倍率の変更
+        const newZoom = Math.max(0.5, Math.min(zoomLevel - e.deltaY * 0.005, 5)); // ズーム感度を調整
+  
+        // ズーム前後の位置差を計算
+        const scaleFactor = newZoom / zoomLevel;
+        const dx = mouseX - offset.x;
+        const dy = mouseY - offset.y;
+  
+        // オフセットを調整
+        setOffset((prev) => ({
+          x: prev.x - dx * (scaleFactor - 1),
+          y: prev.y - dy * (scaleFactor - 1),
+        }));
+  
+        setZoomLevel(newZoom);
+      };
+  
+      // passive: false にして preventDefault を許可
+      canvasDiv.addEventListener("wheel", handleWheel, { passive: false });
+  
+      // クリーンアップ
+      return () => {
+        canvasDiv.removeEventListener("wheel", handleWheel);
+      };
+    }, [zoomLevel, offset]); // 依存関係として zoomLevel と offset を追加
+  
+    // マウスドラッグで平行移動
+    const handleMouseDown = (e) => {
+      const startX = e.clientX;
+      const startY = e.clientY;
+  
+      const handleMouseMove = (moveEvent) => {
+        setOffset((prev) => ({
+          x: prev.x + moveEvent.movementX,
+          y: prev.y + moveEvent.movementY,
+        }));
+      };
+  
+      const handleMouseUp = () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+      };
+  
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    };
   return (
     <div>
     <MiniGraph
