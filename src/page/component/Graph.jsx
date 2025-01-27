@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-
+import MiniGraph from "./MiniGraph";
 const Graph = ({
   scaleStatus,
   nodedata,
@@ -14,6 +14,7 @@ const Graph = ({
   alldata,
   setClickNode,
   clickNode,
+  handleSvgClick,
 }) => {
   const canvasRef = useRef(null); // Canvas要素の参照
 
@@ -67,15 +68,56 @@ function ticked() {
 
 
       // シミュレーション開始
-      simulation.alpha(0).restart();
+      simulation.alpha(1).restart();
 
       // アンマウント時にシミュレーションを停止
       return () => {
         simulation.stop();
       };
     }
-  }, [
-    nodedata,
+  }, []);
+  useEffect(() => {
+      if(scaleStatus){
+      const canvas = document.getElementById("Canvas");
+      const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
+  
+      // キャンバスをクリア
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+      // ノードデータの描画
+      nodedata.map((node,index) => {
+        ctx.beginPath(); // 新しいパスを開始
+  
+        if (!allview) {
+          // allviewがfalseの場合、データが0でない場合のみ描画
+          if (node[select][yearsnext][monthsnext] !== 0) {
+            
+            ctx.arc(
+              node.x ,
+              node.y ,
+              nodeScale(node[select][yearsnext][monthsnext]) ,
+              0,
+              Math.PI * 2
+            );
+          }
+        } else {
+          // allviewがtrueの場合、すべて描画
+          ctx.arc(
+            node.x,
+            node.y,
+            nodeScale(alldata[index][select]),
+            0,
+            Math.PI * 2
+          );
+        }
+  
+        ctx.fillStyle = "blue"; // 塗りつぶしの色
+        ctx.fill(); // 塗りつぶし
+        ctx.closePath(); // パスを閉じる
+      });
+    }
+    }, [
+      nodedata,
       zoomscale,
       scales,
       nodeScale,
@@ -83,16 +125,32 @@ function ticked() {
       select,
       yearsnext,
       monthsnext,
-  ]);
+    ]); // 依存関係を追加して再描画を行う
 
   return (
+    <div>
+    <MiniGraph
+        zoomscale={zoomscale}
+        nodedata={nodedata}
+        scales={scales}
+        nodeScale={nodeScale}
+        allview={allview}
+        alldata={alldata}
+        select={select}
+        yearsnext={yearsnext}
+        monthsnext={monthsnext}
+        scaleStatus={scaleStatus}
+        handleSvgClick={handleSvgClick}
+      />
     <div className="graph">
       <canvas
         ref={canvasRef}
+        id="Canvas"
         width="1200"
         height="1200"
         style={{ border: "1px solid #ccc", display: "block", margin: "0 auto" }}
       ></canvas>
+    </div>
     </div>
   );
 };

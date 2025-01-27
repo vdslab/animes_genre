@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import * as d3 from "d3";
-import MiniGraph from "./page/component/MiniGraph";
 import Graph from "./page/component/Graph";
 import ClickAfter from "./page/component/ClickAfter";
 import "./page/app.css";
@@ -225,19 +224,7 @@ function App() {
 
   return pagestatus ? (
     <div className="container">
-      <MiniGraph
-        zoomscale={zoomscale}
-        nodedata={mininodeData}
-        scales={scales}
-        nodeScale={nodeScale}
-        allview={allview}
-        alldata={alldata}
-        select={select}
-        yearsnext={yearsnext}
-        monthsnext={monthsnext}
-        scaleStatus={scaleStatus}
-        handleSvgClick={handleSvgClick}
-      />
+      
 
       <Graph
         svgRef={svgRef}
@@ -253,6 +240,7 @@ function App() {
         alldata={alldata}
         setClickNode={setClickNode}
         clickNode={clickNode}
+        handleSvgClick={handleSvgClick}
       />
       <ClickAfter
         allview={allview}
