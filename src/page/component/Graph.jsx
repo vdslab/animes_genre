@@ -67,7 +67,7 @@ function ticked() {
 
 
       // シミュレーション開始
-      simulation.alpha(1).restart();
+      simulation.alpha(0).restart();
 
       // アンマウント時にシミュレーションを停止
       return () => {
@@ -75,6 +75,14 @@ function ticked() {
       };
     }
   }, [
+    nodedata,
+      zoomscale,
+      scales,
+      nodeScale,
+      allview,
+      select,
+      yearsnext,
+      monthsnext,
   ]);
 
   return (
