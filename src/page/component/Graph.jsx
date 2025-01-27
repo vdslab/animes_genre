@@ -75,16 +75,6 @@ function ticked() {
       };
     }
   }, [
-    scaleStatus,
-    nodedata,
-    zoomscale,
-    scales,
-    nodeScale,
-    allview,
-    select,
-    yearsnext,
-    monthsnext,
-    alldata,
   ]);
 
   return (
