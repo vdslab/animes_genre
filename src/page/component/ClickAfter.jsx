@@ -136,7 +136,7 @@ const ClickAfter = ({
         )}
       </div>
 
-      <div>
+      {/* <div>
         <select
           style={{
             display: "block",
@@ -150,7 +150,7 @@ const ClickAfter = ({
           <option value="likeCount">総いいね数</option>
           <option value="commentCount">総コメント数</option>
         </select>
-      </div>
+      </div> */}
       {clickNode != null && (
         <div>
           <h2>{clickNode.animename}</h2>
