@@ -16,6 +16,7 @@ const Graph = ({
   clickNode,
   handleSvgClick,
 }) => {
+  const [state,setState]=useState(false)
   const canvasRef = useRef(null); // Canvas要素の参照
   const [zoomLevel, setZoomLevel] = useState(1); // ズームレベルの状態
   const [offset, setOffset] = useState({ x: 0, y: 0 }); // オフセット（平行移動の位置）
@@ -25,16 +26,16 @@ const Graph = ({
     const rect = canvas.getBoundingClientRect(); // キャンバスの位置とサイズを取得
     const x = e.clientX - rect.left; // マウスのX座標（キャンバス内での位置）
     const y = e.clientY - rect.top;  // マウスのY座標（キャンバス内での位置）
-    console.log(x, y);
+    console.log(startXY,zoomLevel);
 
     // ズームレベルを考慮してクリック位置を調整
-    const adjustedX = (x - startXY.x ) / zoomLevel;
-    const adjustedY = (y - startXY.y ) / zoomLevel;
-
+    const adjustedX =  startXY.x +x/ zoomLevel;
+    const adjustedY =  startXY.y +y/ zoomLevel;
+    console.log(adjustedX,adjustedY)
     // ノードを1つ1つチェックして、クリックが円内かどうか判定
     nodedata.forEach((node, index) => {
-      const nodeX = node.x;
-      const nodeY = node.y;
+      const nodeX = node.x ;
+      const nodeY = node.y ;
       const radius = allview
         ? nodeScale(alldata[index][select]) // allviewがtrueならalldataを使用
         : nodeScale(node[select][yearsnext][monthsnext]); // 否なら、選択されたデータを使用
@@ -43,7 +44,7 @@ const Graph = ({
       const distance = Math.sqrt(
         Math.pow(adjustedX - nodeX, 2) + Math.pow(adjustedY - nodeY, 2)
       );
-      if (distance <= radius) {
+      if (distance <= radius*zoomLevel) {
         setClickNode(node); // クリックされたノードを設定
         setZoomLevel(5);
         setStartXY({ x: nodeX - 120, y: nodeY - 120 }); // ズームを考慮してオフセットを更新
@@ -98,7 +99,6 @@ function ticked() {
     ctx.fillStyle = "blue"; // 塗りつぶしの色
     ctx.fill(); // 塗りつぶし
     ctx.closePath();
-    
   });
 }
 
@@ -178,44 +178,7 @@ function ticked() {
       offset,
       startXY,
     ]); // 依存関係を追加して再描画を行う
-    useEffect(() => {
-      const canvasDiv = document.querySelector(".graph");
-  
-      const handleWheel = (e) => {
-        e.preventDefault();
-        const canvas = canvasRef.current;
-        const rect = canvas.getBoundingClientRect();
-  
-        // マウスカーソルの位置を取得
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-  
-        // ズーム倍率の変更
-        const newZoom = Math.max(0.5, Math.min(zoomLevel - e.deltaY * 0.005, 5)); // ズーム感度を調整
-  
-        // ズーム前後の位置差を計算
-        const scaleFactor = newZoom / zoomLevel;
-        const dx = mouseX - offset.x;
-        const dy = mouseY - offset.y;
-  
-        // オフセットを調整
-        setOffset((prev) => ({
-          x: prev.x - dx * (scaleFactor - 1),
-          y: prev.y - dy * (scaleFactor - 1),
-        }));
-  
-        setZoomLevel(newZoom);
-      };
-  
-      // passive: false にして preventDefault を許可
-      canvasDiv.addEventListener("wheel", handleWheel, { passive: false });
-  
-      // クリーンアップ
-      return () => {
-        canvasDiv.removeEventListener("wheel", handleWheel);
-      };
-    }, [zoomLevel, offset]); // 依存関係として zoomLevel と offset を追加
-  
+    
     // マウスドラッグで平行移動
     const handleMouseDown = (e) => {
       const startX = e.clientX;
