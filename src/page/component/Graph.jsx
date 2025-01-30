@@ -194,12 +194,13 @@ const Graph = ({
       // マウスの移動量を計算
       const deltaX = moveEvent.clientX - startX;
       const deltaY = moveEvent.clientY - startY;
-  
+    if(zoomLevel!=1){
       // 移動量に基づいてstartXYを更新
       setStartXY((prev) => ({
         x: prev.x - deltaX,
         y: prev.y - deltaY,
       }));
+    }
   
       // 新しい開始位置に基づいてマウスの位置をリセット
       startX = moveEvent.clientX;
