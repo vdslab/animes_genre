@@ -17,11 +17,13 @@ const Graph = ({
   setClickNode,
   clickNode,
 }) => {
+  const [images, setImages] = useState([]);
   const canvasRef = useRef(null); // Canvas要素の参照
   const [transform, setTransform] = useState(d3.zoomIdentity); // 現在の変換（ズームとパン）
   const [clickNodeInternal, setClickNodeInternal] = useState(null); // 内部クリックノード状態
   const zoomRef = useRef(null); // D3ズームインスタンスの参照
-  const [status,setStatus]=useState(false)
+  const [status, setStatus] = useState(false);
+
   // Canvasクリック時の処理
   const handleCanvasClick = (e) => {
     const canvas = canvasRef.current;
@@ -49,10 +51,10 @@ const Graph = ({
       // ノードを中心にズームするための新しい変換を作成
       const newTransform = d3.zoomIdentity
         .translate(
-          canvas.width / 2 - clickedNode.x * 5,
-          canvas.height / 2 - clickedNode.y * 5
+          canvas.width / 2 - clickedNode.x * 10,
+          canvas.height / 2 - clickedNode.y * 10
         )
-        .scale(5);
+        .scale(10);
       d3.select(canvas)
         .transition()
         .duration(750)
@@ -60,9 +62,28 @@ const Graph = ({
     }
   };
 
+  // 画像の読み込み
+  useEffect(() => {
+    const loadImages = async () => {
+      const imagePromises = nodedata.map((node) => {
+        return new Promise((resolve) => {
+          const image = new Image();
+          image.src = node.coverImage;
+          image.onload = () => resolve(image);
+        });
+      });
+
+      // すべての画像が読み込まれるのを待つ
+      const loadedImages = await Promise.all(imagePromises);
+      setImages(loadedImages); // すべての画像が読み込まれたら状態を更新
+    };
+
+    loadImages(); // 画像を非同期でロード
+  }, [nodedata]);
+
   // 描画用のuseEffect
   useEffect(() => {
-    if (scaleStatus && nodedata.length > 0) {
+    if (scaleStatus && nodedata.length > 0 && images.length > 0) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
       const width = canvas.width;
@@ -91,6 +112,7 @@ const Graph = ({
         // 現在の変換を適用
         ctx.save();
         ctx.translate(transform.x, transform.y);
+        console.log(transform.x,transform.y)
         ctx.scale(transform.k, transform.k);
 
         // ノードを描画
@@ -101,19 +123,35 @@ const Graph = ({
           const radius = allview
             ? nodeScale(alldata[index][select])
             : nodeScale(node[select][yearsnext][monthsnext]);
+          if (transform.k < 9) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = clickNodeInternal === node ? "orange" : "blue"; // クリックされたノードをハイライト
+            ctx.fill(); // 塗りつぶし
+            ctx.closePath();
+          } else {
+            const image = images[index]; // 読み込んだ画像を取得
 
-          ctx.beginPath();
-          ctx.arc(x, y, radius, 0, Math.PI * 2);
-          ctx.fillStyle = clickNodeInternal === node ? "orange" : "blue"; // クリックされたノードをハイライト
-          ctx.fill(); // 塗りつぶし
-          ctx.closePath();
+            if (image) {
+              // 画像が読み込まれていれば描画
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(x, y, radius, 0, Math.PI * 2); // 円のパスを作成
+              ctx.clip(); // クリッピングを適用
+
+              // 画像を描画 (画像の中央をx, yに合わせて表示)
+              ctx.drawImage(image, x - radius, y - radius, radius * 2, radius * 2);
+              ctx.restore(); // 状態をリセット
+            }
+          }
         });
+
         ctx.restore(); // 変換をリセット
       }
-      console.log(transform)
+
       // シミュレーション開始
-      simulation.alpha(!status?1.5:0).restart();
-      setStatus(true)
+      simulation.alpha(!status ? 1.5 : 0).restart();
+      setStatus(true);
 
       // アンマウント時にシミュレーションを停止
       return () => {
@@ -131,6 +169,7 @@ const Graph = ({
     monthsnext,
     nodeScale,
     clickNodeInternal,
+    images, // imagesの状態に依存
   ]);
 
   // D3 Zoomの設定
@@ -205,6 +244,7 @@ const Graph = ({
           setTransform(d3.zoomIdentity.translate(xy.x, xy.y).scale(transform.k))
         }
         zoomLevel={transform.k}
+        clickNode={clickNodeInternal}
       />
 
       <div className="graph">

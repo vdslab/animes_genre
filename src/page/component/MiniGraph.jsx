@@ -13,7 +13,8 @@ const MiniGraph = ({
   scaleStatus,
   startXY,
   setStartXY,
-  zoomLevel
+  zoomLevel,
+  clickNodeInternal
 }) => {
   const nodes = nodedata;
 
@@ -25,7 +26,7 @@ const MiniGraph = ({
     const y = e.clientY - rect.top;  // マウスのY座標（キャンバス内での位置）
 
     // ズームレベルを考慮してクリック位置を調整
-    setStartXY({ x: x * 4-120, y: y * 4-120});
+    setStartXY({ x: x*zoomLevel*4 , y: y*zoomLevel*4});
     console.log(x, y);
   };
 
@@ -63,19 +64,19 @@ const MiniGraph = ({
           );
         }
 
-        ctx.fillStyle = "blue"; // 塗りつぶしの色
+        ctx.fillStyle = clickNodeInternal === node ? "orange" : "blue"; // クリックされたノードをハイライト
         ctx.fill(); // 塗りつぶし
         ctx.closePath(); // パスを閉じる
 
         // 赤い枠の描画
-        ctx.beginPath();
-        ctx.rect(startXY.x / 4, startXY.y / 4, 300 / zoomLevel, 300 / zoomLevel); // (x, y, 幅, 高さ)
+        
+      });
+      ctx.beginPath();
+        ctx.rect(startXY.x /zoomLevel/ 4, startXY.y/ zoomLevel / 4, 300 / zoomLevel, 300 / zoomLevel); // (x, y, 幅, 高さ)
         ctx.strokeStyle = "red"; // 枠線の色
         ctx.lineWidth = 5; // 枠線の太さ
         ctx.stroke(); // 枠線描画
         ctx.closePath();
-      });
-
       return () => {
         // クリーンアップ時にイベントリスナーを削除
         canvas.removeEventListener("click", handleCanvasClick);
