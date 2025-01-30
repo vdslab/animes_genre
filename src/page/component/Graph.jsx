@@ -187,8 +187,8 @@ const Graph = ({
     startXY,
   ]);
   const handleMouseDown = (e) => {
-    const startX = e.clientX;
-    const startY = e.clientY;
+    let startX = e.clientX;
+    let startY = e.clientY;
   
     const handleMouseMove = (moveEvent) => {
       // マウスの移動量を計算
