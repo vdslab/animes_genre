@@ -197,8 +197,8 @@ const Graph = ({
   
       // 移動量に基づいてstartXYを更新
       setStartXY((prev) => ({
-        x: prev.x - deltaX/ zoomLevel,
-        y: prev.y - deltaY/ zoomLevel,
+        x: prev.x - deltaX/ zoomLevel/50,
+        y: prev.y - deltaY/ zoomLevel/50,
       }));
   
       // 新しい開始位置に基づいてマウスの位置をリセット
