@@ -197,8 +197,8 @@ const Graph = ({
     if(zoomLevel!=1){
       // 移動量に基づいてstartXYを更新
       setStartXY((prev) => ({
-        x: prev.x - deltaX,
-        y: prev.y - deltaY,
+        x: prev.x - deltaX/3,
+        y: prev.y - deltaY/3,
       }));
     }
   
