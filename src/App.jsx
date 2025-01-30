@@ -125,78 +125,7 @@ function App() {
     setMininodeData(data)
     return scale;
   };
-  const handleSvgClick = (event) => {
-    const canvas = event.currentTarget;
-    const rect = canvas.getBoundingClientRect(); // Canvasの位置とサイズを取得
-    const x = event.clientX - rect.left; // Canvas内のクリック位置のx座標
-    const y = event.clientY - rect.top; // Canvas内のクリック位置のy座標
-
-    // ズームとパンの新しいスケールを計算
-    const newScale = {
-      k: zoomscale.k,
-      x: (-x + 300 / zoomscale.k / 4) * zoomscale.k * 4, // パンの計算
-      y: (-y + 300 / zoomscale.k / 4) * zoomscale.k * 4, // パンの計算
-    };
-
-    // パンの範囲を制限（画面外に行かないようにする）
-    newScale.x = Math.min(0, Math.max(newScale.x, -1250 * newScale.k + 1250));
-    newScale.y = Math.min(0, Math.max(newScale.y, -1250 * newScale.k + 1250));
-
-    // D3 ズームの状態を更新
-    const transform = d3.zoomIdentity
-      .translate(newScale.x, newScale.y)
-      .scale(newScale.k);
-
-    d3.select(svgRef.current)
-      .transition()
-      .duration(750)
-      .call(zoomRef.current.transform, transform);
-  };
-
-  useEffect(() => {
-    if (clickNode != null) {
-      const sca = 10; // 新しいズーム倍率
-      const newScale = {
-        k: sca,
-        x: -scales.xScale(clickNode.x) * sca + 600, // 中心に持ってくる計算
-        y: -scales.yScale(clickNode.y) * sca + 600,
-      };
-
-      // D3 ズームの状態を更新
-      const transform = d3.zoomIdentity
-        .translate(newScale.x, newScale.y)
-        .scale(newScale.k);
-
-      d3.select(svgRef.current)
-        .transition()
-        .duration(750)
-        .call(zoomRef.current.transform, transform);
-    }
-    console.log(clickNode)
-  }, [clickNode]);
-
-  useEffect(() => {
-    if (pagestatus) {
-      const svg = d3.select(svgRef.current);
-
-      // D3のズームインスタンスを作成してzoomRefに保存
-      const zoom = d3
-        .zoom()
-        .scaleExtent([1, 10]) // ズーム倍率の範囲
-        .translateExtent([
-          [-50, -50],
-          [1250, 1250],
-        ]) // パン可能な範囲
-        .on("zoom", (event) => {
-          setZoomscale(event.transform);
-          svg.select("g").attr("transform", event.transform); // ズームとパンの変換を適用
-        });
-
-      svg.call(zoom); // SVG にズーム機能を適用
-      zoomRef.current = zoom; // zoom インスタンスを ref に保存
-    }
-  }, [pagestatus]);
-
+  
   useEffect(() => {
     const timerId = (g) => {
       if (!stop && !allview) {
@@ -240,7 +169,6 @@ function App() {
         alldata={alldata}
         setClickNode={setClickNode}
         clickNode={clickNode}
-        handleSvgClick={handleSvgClick}
       />
       <ClickAfter
         allview={allview}

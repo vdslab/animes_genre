@@ -11,7 +11,6 @@ const MiniGraph = ({
   yearsnext,
   monthsnext,
   scaleStatus,
-  handleSvgClick,
   startXY,
   setStartXY,
   zoomLevel
