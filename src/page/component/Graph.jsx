@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import MiniGraph from "./MiniGraph";
+import Select from "react-select";
 
 const Graph = ({
   scaleStatus,
@@ -219,6 +220,31 @@ const Graph = ({
 
   return (
     <div>
+      <Select
+            options={nodedata}
+            value={clickNode}
+            getOptionLabel={(option) => option.animename || "Unknown Anime"}
+            onChange={(option) => {
+              setClickNode(option)
+              setZoomLevel(5)
+              setStartXY({ x: option.x - 120, y: option.y - 120 });
+            }}
+            placeholder="アニメを検索..."
+            filterOption={(option, inputValue) => {
+              // animename が存在しない場合は空文字列を使用
+              const animename = (option.data.animename || "")
+                .toLowerCase()
+                .includes(inputValue.toLowerCase());
+              // shortname が存在しない場合は空配列を使用
+              const anime_shortname = (option.data.shortname || [])
+                .filter((item) => item) // 空文字列や undefined を除外
+                .some((item) =>
+                  item.toLowerCase().includes(inputValue.toLowerCase())
+                );
+
+              return animename || anime_shortname;
+            }}
+          />
       <MiniGraph
         zoomscale={zoomscale}
         nodedata={nodedata}
@@ -235,6 +261,7 @@ const Graph = ({
         setStartXY={setStartXY}
         zoomLevel={zoomLevel}
       />
+       
       <div className="graph">
         <canvas
           ref={canvasRef}

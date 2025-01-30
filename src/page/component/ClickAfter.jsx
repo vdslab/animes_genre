@@ -1,6 +1,6 @@
 //<div className="click_After">を分けた
 import { useState, useEffect } from "react";
-import Select from "react-select";
+
 
 const ClickAfter = ({
   allview,
@@ -52,27 +52,7 @@ const ClickAfter = ({
             />
             <label>総合を見る</label>
           </div>
-          <Select
-            options={nodedata}
-            value={clickNode}
-            getOptionLabel={(option) => option.animename || "Unknown Anime"}
-            onChange={(option) => setClickNode(option)}
-            placeholder="アニメを検索..."
-            filterOption={(option, inputValue) => {
-              // animename が存在しない場合は空文字列を使用
-              const animename = (option.data.animename || "")
-                .toLowerCase()
-                .includes(inputValue.toLowerCase());
-              // shortname が存在しない場合は空配列を使用
-              const anime_shortname = (option.data.shortname || [])
-                .filter((item) => item) // 空文字列や undefined を除外
-                .some((item) =>
-                  item.toLowerCase().includes(inputValue.toLowerCase())
-                );
-
-              return animename || anime_shortname;
-            }}
-          />
+         
         </div>
 
         {!allview && (
