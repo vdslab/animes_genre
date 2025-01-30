@@ -19,12 +19,18 @@ const Graph = ({
   const canvasRef = useRef(null); // Canvas要素の参照
   const [zoomLevel, setZoomLevel] = useState(1); // ズームレベルの状態
   const [offset, setOffset] = useState({ x: 0, y: 0 }); // オフセット（平行移動の位置）
+  const [startXY,setStartXY]=useState({x:0,y:0})
   const handleCanvasClick = (e) => {
     const canvas = document.getElementById("Canvas");
     const rect = canvas.getBoundingClientRect(); // キャンバスの位置とサイズを取得
     const x = e.clientX - rect.left; // マウスのX座標（キャンバス内での位置）
     const y = e.clientY - rect.top;  // マウスのY座標（キャンバス内での位置）
-    console.log(x,y)
+    console.log(x, y);
+
+    // ズームレベルを考慮してクリック位置を調整
+    const adjustedX = (x - startXY.x ) / zoomLevel;
+    const adjustedY = (y - startXY.y ) / zoomLevel;
+
     // ノードを1つ1つチェックして、クリックが円内かどうか判定
     nodedata.forEach((node, index) => {
       const nodeX = node.x;
@@ -34,12 +40,18 @@ const Graph = ({
         : nodeScale(node[select][yearsnext][monthsnext]); // 否なら、選択されたデータを使用
 
       // クリック位置が円内かどうかを確認
-      const distance = Math.sqrt(Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2));
+      const distance = Math.sqrt(
+        Math.pow(adjustedX - nodeX, 2) + Math.pow(adjustedY - nodeY, 2)
+      );
       if (distance <= radius) {
         setClickNode(node); // クリックされたノードを設定
+        setZoomLevel(5);
+        setStartXY({ x: nodeX - 120, y: nodeY - 120 }); // ズームを考慮してオフセットを更新
       }
     });
   };
+
+  
 
   useEffect(() => {
     if (scaleStatus && nodedata.length > 0) {
@@ -92,7 +104,7 @@ function ticked() {
 
 
       // シミュレーション開始
-      simulation.alpha(1).restart();
+      simulation.alpha(1.5).restart();
 
       // アンマウント時にシミュレーションを停止
       return () => {
@@ -108,6 +120,11 @@ function ticked() {
   
       // キャンバスをクリア
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.scale(zoomLevel,zoomLevel)
+      if(clickNode!=null){
+        ctx.translate(-startXY.x,-startXY.y)
+      }
+      console.log(zoomLevel)
   
       // ノードデータの描画
       nodedata.map((node,index) => {
@@ -140,6 +157,7 @@ function ticked() {
         ctx.fill(); // 塗りつぶし
         ctx.closePath(); // パスを閉じる
       });
+      
       return () => {
         // クリーンアップ時にイベントリスナーを削除
         canvas.removeEventListener("click", handleCanvasClick);
@@ -155,8 +173,10 @@ function ticked() {
       select,
       yearsnext,
       monthsnext,
+      clickNode,
       zoomLevel,
       offset,
+      startXY,
     ]); // 依存関係を追加して再描画を行う
     useEffect(() => {
       const canvasDiv = document.querySelector(".graph");
@@ -230,6 +250,9 @@ function ticked() {
         monthsnext={monthsnext}
         scaleStatus={scaleStatus}
         handleSvgClick={handleSvgClick}
+        startXY={startXY}
+        setStartXY={setStartXY}
+        zoomLevel={zoomLevel}
       />
     <div className="graph">
       <canvas

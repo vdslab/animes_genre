@@ -19,33 +19,6 @@ const ClickAfter = ({
   setMonthsnext,
   setSelect,
 }) => {
-  const [synopsis, setSynopsis] = useState("");
-
-  useEffect(() => {
-    if (clickNode != null) {
-      const description = clickNode.description.replace(/<[^>]*>/g, "");
-
-      // 非同期関数内で `await` を使用する
-      (async () => {
-        try {
-          // `fetch` の呼び出しでデータを取得
-          const response = await fetch(
-            `https://script.google.com/macros/s/AKfycbxwZewBANl5EuM-pnpbTgMwGryNhDapa3aTYCtBSFf5XIOVzgPmSTTxkiw8bj2fChl-AA/exec?text=${description}&source=en&target=ja`
-          );
-
-          // 取得したレスポンスを JSON として解析
-          const feachData = await response.json();
-
-          // 状態を更新
-
-          setSynopsis(feachData.text);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      })();
-    }
-  }, [clickNode]);
-
   return (
     <div className="click_After">
       <div className="Box">
@@ -156,7 +129,7 @@ const ClickAfter = ({
           <h2>{clickNode.animename}</h2>
           <img src={clickNode.coverImage} alt={clickNode.animename} />
           <h3>あらすじ</h3>
-          <h4>{synopsis}</h4>
+          <h4>{clickNode.description}</h4>
           <h3>放送期間：</h3>
           <h3>
             {clickNode.startDate.year}年 {clickNode.startDate.month}月{" "}

@@ -12,55 +12,76 @@ const MiniGraph = ({
   monthsnext,
   scaleStatus,
   handleSvgClick,
+  startXY,
+  setStartXY,
+  zoomLevel
 }) => {
-  const nodes=nodedata
-  useEffect(() => {
-    if(scaleStatus){
+  const nodes = nodedata;
+
+  // クリックイベントの処理
+  const handleCanvasClick = (e) => {
     const canvas = document.getElementById("myCanvas");
-    const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
+    const rect = canvas.getBoundingClientRect(); // キャンバスの位置とサイズを取得
+    const x = e.clientX - rect.left; // マウスのX座標（キャンバス内での位置）
+    const y = e.clientY - rect.top;  // マウスのY座標（キャンバス内での位置）
 
-    // キャンバスをクリア
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ズームレベルを考慮してクリック位置を調整
+    setStartXY({ x: x * 4-120, y: y * 4-120});
+    console.log(x, y);
+  };
 
-    // ノードデータの描画
-    nodes.map((node,index) => {
-      ctx.beginPath(); // 新しいパスを開始
+  useEffect(() => {
+    if (scaleStatus) {
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
 
-      if (!allview) {
-        // allviewがfalseの場合、データが0でない場合のみ描画
-        if (node[select][yearsnext][monthsnext] !== 0) {
-          
+      // キャンバスをクリア
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // ノードデータの描画
+      nodes.forEach((node, index) => {
+        ctx.beginPath(); // 新しいパスを開始
+
+        if (!allview) {
+          // allviewがfalseの場合、データが0でない場合のみ描画
+          if (node[select][yearsnext][monthsnext] !== 0) {
+            ctx.arc(
+              node.x / 4,
+              node.y / 4,
+              nodeScale(node[select][yearsnext][monthsnext]) / 4,
+              0,
+              Math.PI * 2
+            );
+          }
+        } else {
+          // allviewがtrueの場合、すべて描画
           ctx.arc(
             node.x / 4,
             node.y / 4,
-            nodeScale(node[select][yearsnext][monthsnext]) / 4,
+            nodeScale(alldata[index][select]) / 4,
             0,
             Math.PI * 2
           );
         }
-      } else {
-        // allviewがtrueの場合、すべて描画
-        ctx.arc(
-          node.x / 4,
-          node.y / 4,
-          nodeScale(alldata[index][select]) / 4,
-          0,
-          Math.PI * 2
-        );
-      }
 
-      ctx.fillStyle = "blue"; // 塗りつぶしの色
-      ctx.fill(); // 塗りつぶし
-      ctx.closePath(); // パスを閉じる
-      ctx.beginPath();
+        ctx.fillStyle = "blue"; // 塗りつぶしの色
+        ctx.fill(); // 塗りつぶし
+        ctx.closePath(); // パスを閉じる
 
-      ctx.rect(-zoomscale.x / 4 / zoomscale.k, -zoomscale.y / 4 / zoomscale.k, 300 / zoomscale.k, 300 / zoomscale.k); // (x, y, 幅, 高さ)
-      ctx.strokeStyle = "red"; // 枠線の色
-      ctx.lineWidth = 5; // 枠線の太さ
-      ctx.stroke(); // 枠線描画
-      ctx.closePath();
-    });
-  }
+        // 赤い枠の描画
+        ctx.beginPath();
+        ctx.rect(startXY.x / 4, startXY.y / 4, 300 / zoomLevel, 300 / zoomLevel); // (x, y, 幅, 高さ)
+        ctx.strokeStyle = "red"; // 枠線の色
+        ctx.lineWidth = 5; // 枠線の太さ
+        ctx.stroke(); // 枠線描画
+        ctx.closePath();
+      });
+
+      return () => {
+        // クリーンアップ時にイベントリスナーを削除
+        canvas.removeEventListener("click", handleCanvasClick);
+      };
+    }
   }, [
     nodedata,
     zoomscale,
@@ -70,13 +91,23 @@ const MiniGraph = ({
     select,
     yearsnext,
     monthsnext,
-  ]); // 依存関係を追加して再描画を行う
+    startXY,
+    zoomLevel,
+    scaleStatus,
+  ]);
 
   return (
     <div className="mini_graph">
-    {scaleStatus?(
-      <canvas id="myCanvas" width="300" height="300" onClick={handleSvgClick}></canvas>
-    ):<div>少々お待ちください</div>}
+      {scaleStatus ? (
+        <canvas
+          id="myCanvas"
+          width="300"
+          height="300"
+          onClick={handleCanvasClick} // クリックイベントをここで処理
+        ></canvas>
+      ) : (
+        <div>少々お待ちください</div>
+      )}
     </div>
   );
 };

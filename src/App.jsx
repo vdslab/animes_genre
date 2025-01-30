@@ -113,8 +113,8 @@ function App() {
       }
     });
 
-    scale["xScale"] = d3.scaleLinear().domain([xmin, xmax]).range([0, 1200]);
-    scale["yScale"] = d3.scaleLinear().domain([ymin, ymax]).range([0, 1200]);
+    scale["xScale"] = d3.scaleLinear().domain([xmin, xmax]).range([100, 1100]);
+    scale["yScale"] = d3.scaleLinear().domain([ymin, ymax]).range([100, 1100]);
     
     data.map((node)=>{
       node.x=scale["xScale"](node.x)
