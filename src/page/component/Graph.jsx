@@ -139,7 +139,7 @@ const Graph = ({
 
   // 描画用のuseEffect
   useEffect(() => {
-    if (scaleStatus && nodedata.length > 0 && images.length > 0) {
+    if (scaleStatus && nodedata.length > 0 && images.length == 0) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
       const width = canvas.width;
@@ -180,33 +180,13 @@ const Graph = ({
           const radius = allview
             ? nodeScale(alldata[index][select])
             : nodeScale(node[select][yearsnext][monthsnext]);
-          if (transform.k < 6) {
+          
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, Math.PI * 2);
             ctx.fillStyle = clickNode === node ? "orange" : "blue"; // クリックされたノードをハイライト
             ctx.fill(); // 塗りつぶし
             ctx.closePath();
-          } else {
-            const image = images[index]; // 読み込んだ画像を取得
-
-            if (image) {
-              // 画像が読み込まれていれば描画
-              ctx.save();
-              ctx.beginPath();
-              ctx.arc(x, y, radius, 0, Math.PI * 2); // 円のパスを作成
-              ctx.clip(); // クリッピングを適用
-
-              // 画像を描画 (画像の中央をx, yに合わせて表示)
-              ctx.drawImage(image, x - radius, y - radius, radius * 2, radius * 2);
-              if(clickNode==node){
-                ctx.arc(x, y, radius, 0, Math.PI * 2); // もう一度同じ円を描画
-                ctx.lineWidth = 1; // 枠線の太さ
-                ctx.strokeStyle = "orange"; // 枠線の色を赤に設定
-                ctx.stroke(); // 枠線を描画
-              }
-              ctx.restore(); // 状態をリセット
-            }
-          }
+          
         });
 
         ctx.restore(); // 変換をリセット
@@ -221,20 +201,72 @@ const Graph = ({
         simulation.stop();
       };
     }
-  }, [
-    scaleStatus,
-    nodedata,
-    transform,
-    allview,
-    alldata,
-    select,
-    yearsnext,
-    monthsnext,
-    nodeScale,
-    clickNodeInternal,
-    images, // imagesの状態に依存
-  ]);
+  }, [nodedata,clickNode]);
+useEffect(()=>{
+  if (scaleStatus && nodedata.length > 0 && images.length > 0) {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
+    const width = canvas.width;
+    const height = canvas.height;
+      // Canvasをクリア
+      ctx.clearRect(0, 0, width, height);
 
+      // 現在の変換を適用
+      ctx.save();
+      ctx.translate(transform.x, transform.y);
+      ctx.scale(transform.k, transform.k);
+
+      // ノードを描画
+      nodedata.forEach((node, index) => {
+        const x = node.x; // シミュレーションで決定されたx座標
+        const y = node.y; // シミュレーションで決定されたy座標
+
+        const radius = allview
+          ? nodeScale(alldata[index][select])
+          : nodeScale(node[select][yearsnext][monthsnext]);
+        if (transform.k < 6) {
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fillStyle = clickNode === node ? "orange" : "blue"; // クリックされたノードをハイライト
+          ctx.fill(); // 塗りつぶし
+          ctx.closePath();
+        } else {
+          const image = images[index]; // 読み込んだ画像を取得
+
+          if (image) {
+            // 画像が読み込まれていれば描画
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2); // 円のパスを作成
+            ctx.clip(); // クリッピングを適用
+
+            // 画像を描画 (画像の中央をx, yに合わせて表示)
+            ctx.drawImage(image, x - radius, y - radius, radius * 2, radius * 2);
+            if(clickNode==node){
+              ctx.arc(x, y, radius, 0, Math.PI * 2); // もう一度同じ円を描画
+              ctx.lineWidth = 1; // 枠線の太さ
+              ctx.strokeStyle = "orange"; // 枠線の色を赤に設定
+              ctx.stroke(); // 枠線を描画
+            }
+            ctx.restore(); // 状態をリセット
+          }
+        }
+        
+      });
+
+      ctx.restore(); // 変換をリセット
+}},[scaleStatus,
+  nodedata,
+  transform,
+  allview,
+  alldata,
+  select,
+  yearsnext,
+  monthsnext,
+  nodeScale,
+  clickNodeInternal,
+  images, // imagesの状態に依存
+  ])
   // D3 Zoomの設定
   useEffect(() => {
     const canvas = canvasRef.current;
