@@ -255,10 +255,7 @@ const Graph = ({
 
   return (
     <div>
-      <div className="tool">
-      <button onClick={()=>handleToolClick("plus") } style={transform.k==10?{opacity:0.5}:{opacity:1}}>＋</button>
-      <button onClick={()=>handleToolClick("minus")} style={transform.k==0.5?{opacity:0.5}:{opacity:1}}>ー</button>
-      <button onClick={()=>handleToolClick("all")}>ALL</button>
+      
       <Select
         options={nodedata}
         value={clickNode}
@@ -294,8 +291,11 @@ const Graph = ({
         }}
         
       />
-       </div>
       {updateNodeData.length!=0&&
+      <div className="tool">
+      <button onClick={()=>handleToolClick("plus") } style={transform.k==10?{opacity:0.5}:{opacity:1}}>＋</button>
+      <button onClick={()=>handleToolClick("minus")} style={transform.k==0.5?{opacity:0.5}:{opacity:1}}>ー</button>
+      <button onClick={()=>handleToolClick("all")}>ALL</button>
       <MiniGraph
         zoomscale={zoomscale}
         nodedata={updateNodeData}
@@ -314,7 +314,7 @@ const Graph = ({
         canvasmain={canvas}
         zoomRef={zoomRef}
         status={status}
-      />}
+      /></div>}
 
      
         <canvas

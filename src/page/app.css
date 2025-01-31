@@ -4,11 +4,13 @@
   align-items: flex-start; /* 子要素を垂直方向に中央揃え */
   margin-top: 20px; /* 上部に少しスペース */
 }
-
-.mini_graph canvas {
+.tool {
   position: fixed; /* 画面の固定位置 */
   bottom: 0px; /* 下端からの距離 */
   left: 0px; /* 左端からの距離 */
+}
+.mini_graph canvas {
+
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
