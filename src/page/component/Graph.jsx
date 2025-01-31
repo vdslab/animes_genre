@@ -144,6 +144,7 @@ const Graph = ({
   useEffect(() => {
     if (scaleStatus && nodedata.length > 0 ) {
       const canvas = canvasRef.current;
+      console.log("動いてますか？")
       const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
       const width = canvas.width;
       const height = canvas.height;
@@ -204,6 +205,7 @@ const Graph = ({
         simulation.stop();
       };
     }
+    
   }, [nodedata]);
 useEffect(()=>{
   if (updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
@@ -279,11 +281,9 @@ useEffect(()=>{
 }},[scaleStatus,
   transform,
   allview,
-  alldata,
   select,
   yearsnext,
   monthsnext,
-  nodeScale,
   clickNodeInternal,
   images, // imagesの状態に依存
   ])
