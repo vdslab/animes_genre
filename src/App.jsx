@@ -151,7 +151,7 @@ function App() {
     return () => clearInterval(intervalId);
   }, [stop, allview, yearsnext, monthsnext]); // sortDataとyearsnextが変更されるたびに最新の値を使う
 
-  return pagestatus ? (
+  return pagestatus&&nodedata.length!=0 ? (
     <div className="container">
       
 
