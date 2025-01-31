@@ -14,7 +14,7 @@ const MiniGraph = ({
   startXY,
   setStartXY,
   zoomLevel,
-  clickNodeInternal,
+  clickNode,
   canvasmain,
   zoomRef
 
@@ -37,8 +37,8 @@ const MiniGraph = ({
     };
     const newTransform = d3.zoomIdentity
             .translate(
-              -(x * 10 * 4) + 2400 / zoomLevel ,
-              -(y * 10 * 4) + 2400 / zoomLevel
+              newStartXY.x ,
+              newStartXY.y
             )
             .scale(10);
           d3.select(canvasmain)
@@ -82,8 +82,8 @@ const MiniGraph = ({
             Math.PI * 2
           );
         }
-
-        ctx.fillStyle = clickNodeInternal === node ? "orange" : "blue"; // クリックされたノードをハイライト
+        console.log(clickNode)
+        ctx.fillStyle = clickNode === node ? "orange" : "blue"; // クリックされたノードをハイライト
         ctx.fill(); // 塗りつぶし
         ctx.closePath(); // パスを閉じる
       });

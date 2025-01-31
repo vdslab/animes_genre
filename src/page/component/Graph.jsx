@@ -142,6 +142,12 @@ const Graph = ({
 
               // 画像を描画 (画像の中央をx, yに合わせて表示)
               ctx.drawImage(image, x - radius, y - radius, radius * 2, radius * 2);
+              if(clickNodeInternal==node){
+                ctx.arc(x, y, radius, 0, Math.PI * 2); // もう一度同じ円を描画
+                ctx.lineWidth = 1; // 枠線の太さ
+                ctx.strokeStyle = "orange"; // 枠線の色を赤に設定
+                ctx.stroke(); // 枠線を描画
+              }
               ctx.restore(); // 状態をリセット
             }
           }
@@ -180,7 +186,7 @@ const Graph = ({
     // ズームの動作を定義
     const zoom = d3
       .zoom()
-      .scaleExtent([0.5, 20]) // ズームの範囲を定義
+      .scaleExtent([0.5, 10]) // ズームの範囲を定義
       .on("zoom", (event) => {
         setTransform(event.transform); // 変換状態を更新
       });
