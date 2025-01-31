@@ -18,6 +18,7 @@ const Graph = ({
   clickNode,
 }) => {
   const [canvas,setCanvas]=useState(null)
+  const [updateNodeData,setUpdateNodeData]=useState([])
   const [images, setImages] = useState([]);
   const canvasRef = useRef(null); // Canvas要素の参照
   const [transform, setTransform] = useState(d3.zoomIdentity); // 現在の変換（ズームとパン）
@@ -27,11 +28,15 @@ const Graph = ({
 
   // Canvasクリック時の処理
   const handleCanvasClick = (e) => {
-    setCanvas(canvasRef.current);
-    const rect = canvas.getBoundingClientRect(); // キャンバスの位置とサイズを取得
+    // canvasRef.currentがnullでないことを確認
+    const canvasElement = canvasRef.current;
+    if (!canvasElement) return; // canvasがnullの場合は何もしない
+  
+    setCanvas(canvasElement);
+    const rect = canvasElement.getBoundingClientRect(); // キャンバスの位置とサイズを取得
     const x = (e.clientX - rect.left - transform.x) / transform.k; // 現在の変換を考慮したX座標
     const y = (e.clientY - rect.top - transform.y) / transform.k; // 現在の変換を考慮したY座標
-
+  
     // クリックされたノードを見つける
     const clickedNode = nodedata.find((node, index) => {
       const nodeX = node.x;
@@ -39,29 +44,30 @@ const Graph = ({
       const radius = allview
         ? nodeScale(alldata[index][select])
         : nodeScale(node[select][yearsnext][monthsnext]);
-
+  
       const distance = Math.sqrt(
         Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2)
       );
       return distance <= radius;
     });
-
+  
     if (clickedNode && zoomRef.current) {
       setClickNodeInternal(clickedNode);
       setClickNode(clickedNode);
       // ノードを中心にズームするための新しい変換を作成
       const newTransform = d3.zoomIdentity
         .translate(
-          canvas.width / 2 - clickedNode.x * 10,
-          canvas.height / 2 - clickedNode.y * 10
+          canvasElement.width / 2 - clickedNode.x * 10,
+          canvasElement.height / 2 - clickedNode.y * 10
         )
         .scale(10);
-      d3.select(canvas)
+      d3.select(canvasElement)
         .transition()
         .duration(750)
         .call(zoomRef.current.transform, newTransform);
     }
   };
+  
 
   // 画像の読み込み
   useEffect(() => {
@@ -103,8 +109,10 @@ const Graph = ({
               : nodeScale(node[select][yearsnext][monthsnext]) / 2
           )
         ) // ノード間の衝突防止
-        .on("tick", ticked); // シミュレーションの更新
-
+        .on("tick", ticked) // シミュレーションの更新
+        .on("end", () =>{
+          setUpdateNodeData(nodedata)
+          setStatus(true)});
       // ノードの描画関数
       function ticked() {
         // Canvasをクリア
@@ -113,7 +121,6 @@ const Graph = ({
         // 現在の変換を適用
         ctx.save();
         ctx.translate(transform.x, transform.y);
-        console.log(transform.x,transform.y)
         ctx.scale(transform.k, transform.k);
 
         // ノードを描画
@@ -127,7 +134,7 @@ const Graph = ({
           if (transform.k < 9) {
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, Math.PI * 2);
-            ctx.fillStyle = clickNodeInternal === node ? "orange" : "blue"; // クリックされたノードをハイライト
+            ctx.fillStyle = clickNode === node ? "orange" : "blue"; // クリックされたノードをハイライト
             ctx.fill(); // 塗りつぶし
             ctx.closePath();
           } else {
@@ -142,7 +149,7 @@ const Graph = ({
 
               // 画像を描画 (画像の中央をx, yに合わせて表示)
               ctx.drawImage(image, x - radius, y - radius, radius * 2, radius * 2);
-              if(clickNodeInternal==node){
+              if(clickNode==node){
                 ctx.arc(x, y, radius, 0, Math.PI * 2); // もう一度同じ円を描画
                 ctx.lineWidth = 1; // 枠線の太さ
                 ctx.strokeStyle = "orange"; // 枠線の色を赤に設定
@@ -210,10 +217,10 @@ const Graph = ({
             const canvas = canvasRef.current;
             const newTransform = d3.zoomIdentity
               .translate(
-                canvas.width / 2 - option.x * 5,
-                canvas.height / 2 - option.y * 5
+                canvas.width / 2 - option.x * 10,
+                canvas.height / 2 - option.y * 10
               )
-              .scale(5);
+              .scale(10);
             d3.select(canvas)
               .transition()
               .duration(750)
@@ -222,22 +229,22 @@ const Graph = ({
         }}
         placeholder="アニメを検索..."
         filterOption={(option, inputValue) => {
-          // animenameとshortnameでフィルタリング
-          const animename = (option.animename || "")
+          const animename = (option.data.animename || "")
             .toLowerCase()
             .includes(inputValue.toLowerCase());
-          const anime_shortname = (option.shortname || [])
-            .filter((item) => item)
-            .some((item) =>
-              item.toLowerCase().includes(inputValue.toLowerCase())
-            );
-
+          const anime_shortname = Array.isArray(option.data.shortname)
+            ? option.data.shortname.some((item) =>
+                item.toLowerCase().includes(inputValue.toLowerCase())
+              )
+            : (option.data.shortname || "").toLowerCase().includes(inputValue.toLowerCase());
           return animename || anime_shortname;
         }}
+        
       />
+      {updateNodeData.length!=0&&
       <MiniGraph
         zoomscale={zoomscale}
-        nodedata={nodedata}
+        nodedata={updateNodeData}
         scales={scales}
         nodeScale={nodeScale}
         allview={allview}
@@ -249,10 +256,11 @@ const Graph = ({
         startXY={transform}
         setStartXY={setTransform}
         zoomLevel={transform.k}
-        clickNode={clickNodeInternal}
+        clickNode={clickNode}
         canvasmain={canvas}
         zoomRef={zoomRef}
-      />
+        status={status}
+      />}
 
      
         <canvas

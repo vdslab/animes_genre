@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import * as d3 from "d3";
+
 const MiniGraph = ({
   zoomscale,
   nodedata,
@@ -16,88 +17,88 @@ const MiniGraph = ({
   zoomLevel,
   clickNode,
   canvasmain,
-  zoomRef
-
+  zoomRef,
+  status
 }) => {
   const nodes = nodedata;
 
+  // canvasへの参照を作成
+  const canvasRef = useRef(null);
+
   // クリックイベントの処理
   const handleCanvasClick = (e) => {
-    const canvas = document.getElementById("myCanvas");
-    const rect = canvas.getBoundingClientRect(); // キャンバスの位置とサイズを取得
-    const x = e.clientX - rect.left; // マウスのX座標（キャンバス内での位置）
-    const y = e.clientY - rect.top;  // マウスのY座標（キャンバス内での位置）
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    // ズームレベルを考慮してクリック位置を調整
-    // (x, y)座標はズームレベルやキャンバス内の相対位置に依存します
     const newStartXY = {
       k: startXY.k,
-      x: (-(x-300/zoomLevel/2)* zoomLevel)*4,
-      y: (-(y-300/zoomLevel/2)* zoomLevel)*4,
+      x: (-(x - 300 / zoomLevel / 2) * zoomLevel) * 4,
+      y: (-(y - 300 / zoomLevel / 2) * zoomLevel) * 4,
     };
     const newTransform = d3.zoomIdentity
-            .translate(
-              newStartXY.x ,
-              newStartXY.y
-            )
-            .scale(10);
-          d3.select(canvasmain)
-            .transition()
-            .duration(750)
-            .call(zoomRef.current.transform, newTransform);
-    // 状態を更新
+      .translate(newStartXY.x, newStartXY.y)
+      .scale(10);
+    d3.select(canvasmain)
+      .transition()
+      .duration(750)
+      .call(zoomRef.current.transform, newTransform);
+    
     setStartXY(newStartXY);
   };
 
   useEffect(() => {
-    if (scaleStatus) {
-      const canvas = document.getElementById("myCanvas");
-      const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
+    if (status) {
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
 
-      // キャンバスをクリア
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // ノードデータの描画
-      nodes.forEach((node, index) => {
-        ctx.beginPath(); // 新しいパスを開始
+        nodes.forEach((node, index) => {
+          ctx.beginPath();
 
-        if (!allview) {
-          // allviewがfalseの場合、データが0でない場合のみ描画
-          if (node[select][yearsnext][monthsnext] !== 0) {
+          if (!allview) {
+            if (node[select][yearsnext][monthsnext] !== 0) {
+              ctx.arc(
+                node.x / 4,
+                node.y / 4,
+                nodeScale(node[select][yearsnext][monthsnext]) / 4,
+                0,
+                Math.PI * 2
+              );
+            }
+          } else {
             ctx.arc(
               node.x / 4,
               node.y / 4,
-              nodeScale(node[select][yearsnext][monthsnext]) / 4,
+              nodeScale(alldata[index][select]) / 4,
               0,
               Math.PI * 2
             );
           }
-        } else {
-          // allviewがtrueの場合、すべて描画
-          ctx.arc(
-            node.x / 4,
-            node.y / 4,
-            nodeScale(alldata[index][select]) / 4,
-            0,
-            Math.PI * 2
-          );
-        }
-        console.log(clickNode)
-        ctx.fillStyle = clickNode === node ? "orange" : "blue"; // クリックされたノードをハイライト
-        ctx.fill(); // 塗りつぶし
-        ctx.closePath(); // パスを閉じる
-      });
 
-      // 赤い枠の描画
-      ctx.beginPath();
-      console.log(startXY);
-      ctx.rect(-(startXY.x) / zoomLevel / 4, -(startXY.y) / zoomLevel / 4, 300 / zoomLevel, 300 / zoomLevel); // (x, y, 幅, 高さ)
-      ctx.strokeStyle = "red"; // 枠線の色
-      ctx.lineWidth = 2.5; // 枠線の太さ
-      ctx.stroke(); // 枠線描画
-      ctx.closePath();
+          ctx.fillStyle = clickNode === node ? "orange" : "blue";
+          ctx.fill();
+          ctx.closePath();
+        });
+
+        ctx.beginPath();
+        ctx.rect(
+          -(startXY.x) / zoomLevel / 4,
+          -(startXY.y) / zoomLevel / 4,
+          300 / zoomLevel,
+          300 / zoomLevel
+        );
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        ctx.closePath();
+      }
     }
   }, [
+    status,
     nodedata,
     zoomscale,
     scales,
@@ -106,7 +107,7 @@ const MiniGraph = ({
     select,
     yearsnext,
     monthsnext,
-    startXY,  // ここでstartXYが更新されるたびに描画が更新されます
+    startXY,
     zoomLevel,
     scaleStatus,
   ]);
@@ -115,10 +116,10 @@ const MiniGraph = ({
     <div className="mini_graph">
       {scaleStatus ? (
         <canvas
-          id="myCanvas"
+          ref={canvasRef}  // refを設定
           width="300"
           height="300"
-          onClick={handleCanvasClick} // クリックイベントをここで処理
+          onClick={handleCanvasClick}
         ></canvas>
       ) : (
         <div>少々お待ちください</div>
@@ -126,4 +127,5 @@ const MiniGraph = ({
     </div>
   );
 };
+
 export default MiniGraph;
