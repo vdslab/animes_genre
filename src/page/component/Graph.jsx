@@ -208,6 +208,7 @@ const Graph = ({
     
   }, [nodedata]);
 useEffect(()=>{
+  console.log("動いてません")
   if (updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
