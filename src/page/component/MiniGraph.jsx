@@ -32,8 +32,8 @@ const MiniGraph = ({
     // (x, y)座標はズームレベルやキャンバス内の相対位置に依存します
     const newStartXY = {
       k: startXY.k,
-      x: -(x * zoomLevel * 4),
-      y: -(y * zoomLevel * 4) 
+      x: (-(x-300/zoomLevel/2)* zoomLevel)*4,
+      y: (-(y-300/zoomLevel/2)* zoomLevel)*4,
     };
     const newTransform = d3.zoomIdentity
             .translate(
@@ -91,7 +91,7 @@ const MiniGraph = ({
       // 赤い枠の描画
       ctx.beginPath();
       console.log(startXY);
-      ctx.rect(-(startXY.x) / 10 / 4, -(startXY.y) / 10 / 4, 300 / zoomLevel, 300 / zoomLevel); // (x, y, 幅, 高さ)
+      ctx.rect(-(startXY.x) / zoomLevel / 4, -(startXY.y) / zoomLevel / 4, 300 / zoomLevel, 300 / zoomLevel); // (x, y, 幅, 高さ)
       ctx.strokeStyle = "red"; // 枠線の色
       ctx.lineWidth = 2.5; // 枠線の太さ
       ctx.stroke(); // 枠線描画

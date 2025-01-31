@@ -79,7 +79,7 @@ function App() {
           setNodeScale(() => Scale); // setNodeScaleを直接関数として渡す
           setScaleStatus(true);
         } else {
-          const Scale = d3.scaleLinear().domain([0, max]).range([1, 1]).nice();
+          const Scale = d3.scaleLinear().domain([0, max]).range([3, 3]).nice();
           setNodeScale(() => Scale); // setNodeScaleを直接関数として渡す
           setScaleStatus(true);
         }
