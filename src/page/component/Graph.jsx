@@ -17,6 +17,7 @@ const Graph = ({
   setClickNode,
   clickNode,
 }) => {
+  const [mouseXY,setMouseXY]=useState({x:0,y:0})
   const [canvas,setCanvas]=useState(null)
   const [updateNodeData,setUpdateNodeData]=useState([])
   const [images, setImages] = useState([]);
@@ -35,7 +36,7 @@ const Graph = ({
     const rect = canvasElement.getBoundingClientRect(); // キャンバスの位置とサイズを取得
     const x = (e.clientX - rect.left - transform.x) / transform.k; // 現在の変換を考慮したX座標
     const y = (e.clientY - rect.top - transform.y) / transform.k; // 現在の変換を考慮したY座標
-  
+    setMouseXY({x:e.clientX,y:e.clientY})
     // クリックされたノードを見つける
     const hoverNode = nodedata.find((node, index) => {
       const nodeX = node.x;
@@ -233,7 +234,6 @@ const Graph = ({
     
   }, [nodedata,scaleStatus]);
 useEffect(()=>{
-  console.log("動いてません")
   if (status&&updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
@@ -255,7 +255,7 @@ useEffect(()=>{
         const radius = allview
           ? nodeScale(alldata[index][select])
           : nodeScale(node[select][yearsnext][monthsnext]);
-        if (transform.k < 6) {
+        if (transform.k <= 1) {
           ctx.beginPath();
           ctx.arc(x, y, radius, 0, Math.PI * 2);
           let color=null
@@ -423,7 +423,24 @@ useEffect(()=>{
           onClick={(e)=>handleCanvasClick(e)} // クリックイベントを追加
           onMouseMove={(e)=>handleMouseMove(e)} // マウスの移動を追跡
         ></canvas>
-    
+        {hoversNode && (
+  <div
+    id="hoverDiv"
+    className="hover-div"
+    style={{
+      left: `${mouseXY.x }px`,  // ノードのX位置に10pxオフセット
+      top: `${mouseXY.y-20}px`,   // ノードのY位置に10pxオフセット
+      position: 'absolute',            // 絶対位置で配置
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      color: 'white',
+      padding: '5px',
+      borderRadius: '5px',
+    }}
+  >
+    {hoversNode.animename}
+  </div>
+)}
+
     </div>
   );
 };

@@ -149,7 +149,7 @@ const ClickAfter = ({
           {clickNode.link.map((node, index) => (
             <div key={index}>
               <h4>{node["site"]} URL:</h4>
-              <a href={node["url"]}>{node["url"]}</a>
+              <a href={node["url"]} target="_blank">{node["url"]}</a>
             </div>
           ))}
            <button
