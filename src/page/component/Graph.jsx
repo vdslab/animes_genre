@@ -203,7 +203,7 @@ const Graph = ({
     }
   }, [nodedata,clickNode]);
 useEffect(()=>{
-  if (scaleStatus && nodedata.length > 0 && images.length > 0) {
+  if (scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
     const width = canvas.width;
