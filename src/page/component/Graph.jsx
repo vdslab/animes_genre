@@ -25,7 +25,33 @@ const Graph = ({
   const [clickNodeInternal, setClickNodeInternal] = useState(null); // 内部クリックノード状態
   const zoomRef = useRef(null); // D3ズームインスタンスの参照
   const [status, setStatus] = useState(false);
+  const [hoversNode,setHovrsNode]=useState(null)
 
+  const handleMouseMove=(e)=>{
+    const canvasElement = canvasRef.current;
+    if (!canvasElement||updateNodeData.length==0) return; // canvasがnullの場合は何もしない
+  
+    setCanvas(canvasElement);
+    const rect = canvasElement.getBoundingClientRect(); // キャンバスの位置とサイズを取得
+    const x = (e.clientX - rect.left - transform.x) / transform.k; // 現在の変換を考慮したX座標
+    const y = (e.clientY - rect.top - transform.y) / transform.k; // 現在の変換を考慮したY座標
+  
+    // クリックされたノードを見つける
+    const hoverNode = nodedata.find((node, index) => {
+      const nodeX = node.x;
+      const nodeY = node.y;
+      const radius = allview
+        ? nodeScale(alldata[index][select])
+        : nodeScale(node[select][yearsnext][monthsnext]);
+  
+      const distance = Math.sqrt(
+        Math.pow(x - nodeX, 2) + Math.pow(y - nodeY, 2)
+      );
+      return distance <= radius;
+    })
+  setHovrsNode(hoverNode)
+    
+  }
   const handleToolClick = (order) => {
     const canvasElement = canvasRef.current;
     if (!canvasElement) return; // canvasがnullの場合は何もしない
@@ -232,7 +258,15 @@ useEffect(()=>{
         if (transform.k < 6) {
           ctx.beginPath();
           ctx.arc(x, y, radius, 0, Math.PI * 2);
-          ctx.fillStyle = clickNode === node ? "orange" : "blue"; // クリックされたノードをハイライト
+          let color=null
+          if(hoversNode===node){
+            color="red"
+          } else if(clickNode===node){
+            color="orange"
+          } else {
+            color="blue"
+          }
+          ctx.fillStyle = color // クリックされたノードをハイライト
           ctx.fill(); // 塗りつぶし
           ctx.closePath();
         } else {
@@ -376,13 +410,18 @@ useEffect(()=>{
           id="Canvas"
           width="1200"
           height="1200"
-          style={{
+          style={hoversNode!=null?{
             border: "1px solid #ccc",
             display: "block",
             margin: "0 auto",
-            cursor: "grab",
-          }}
+            cursor: "pointer",
+          }:
+        { border: "1px solid #ccc",
+          display: "block",
+          margin: "0 auto",
+          cursor: "grab",}}
           onClick={(e)=>handleCanvasClick(e)} // クリックイベントを追加
+          onMouseMove={(e)=>handleMouseMove(e)} // マウスの移動を追跡
         ></canvas>
     
     </div>

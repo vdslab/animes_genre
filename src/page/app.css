@@ -92,13 +92,11 @@ h1 {
   text-decoration: underline;
 }
 
-.click_After button {
+.button {
   display: block;
   margin: 20px auto;
   padding: 10px 20px;
   font-size: 1rem;
-  color: #fff;
-  background-color: #007bff; /* ボタンの色 */
   border: none;
   border-radius: 5px;
   cursor: pointer;
