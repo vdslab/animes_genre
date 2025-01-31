@@ -137,6 +137,8 @@ const ClickAfter = ({
           <img src={clickNode.coverImage} alt={clickNode.animename} />
           <h3>あらすじ</h3>
           <h4>{clickNode.description!=null&&clickNode.description.text}</h4>
+          <h3>ジャンル</h3>
+          <h4>{clickNode.tag.map((tag)=>tag.name+",")}</h4>
           <h3>放送期間：</h3>
           <h3>
             {clickNode.startDate.year}年 {clickNode.startDate.month}月{" "}

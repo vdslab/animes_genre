@@ -110,6 +110,7 @@ def tags():
      "y": float(anime_mds_jittered[i, 1]),  # ジッターを適用したy
      "year": datas["anime_data"][i]["year"],
      "n": datas["anime_data"][i]["n"],
+     "tag":datas["anime_data"][i]["tag"],
      "shortname": datas["anime_data"][i]["shortname"],
      "description": datanode[i]["description"],
      "startDate": datas["anime_data"][i]["startDate"],
