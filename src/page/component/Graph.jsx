@@ -429,7 +429,7 @@ useEffect(()=>{
     className="hover-div"
     style={{
       left: `${mouseXY.x }px`,  // ノードのX位置に10pxオフセット
-      top: `${mouseXY.y-20}px`,   // ノードのY位置に10pxオフセット
+      top: `${mouseXY.y-40}px`,   // ノードのY位置に10pxオフセット
       position: 'absolute',            // 絶対位置で配置
       backgroundColor: 'rgba(0, 0, 0, 0.7)',
       color: 'white',
