@@ -152,7 +152,13 @@ const ClickAfter = ({
               <a href={node["url"]}>{node["url"]}</a>
             </div>
           ))}
-
+           <button
+            onClick={() => {
+              setClickNode(null);
+            }}
+          >
+            閉じる
+          </button>
         </div>
       )}
     </div>
