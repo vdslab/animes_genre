@@ -79,7 +79,7 @@ const Graph = ({
   const handleCanvasClick = (e) => {
     // canvasRef.currentがnullでないことを確認
     const canvasElement = canvasRef.current;
-    if (!canvasElement) return; // canvasがnullの場合は何もしない
+    if (!canvasElement||updateNodeData.length==0) return; // canvasがnullの場合は何もしない
   
     setCanvas(canvasElement);
     const rect = canvasElement.getBoundingClientRect(); // キャンバスの位置とサイズを取得
@@ -314,6 +314,7 @@ useEffect(()=>{
         value={clickNode}
         getOptionLabel={(option) => option.animename || "Unknown Anime"}
         onChange={(option) => {
+          if(updateNodeData.length!=0){
           setClickNode(option);
           // 選択されたノードを中心にズーム
           if (zoomRef.current) {
@@ -329,9 +330,11 @@ useEffect(()=>{
               .duration(750)
               .call(zoomRef.current.transform, newTransform);
           }
+        }
         }}
         placeholder="アニメを検索..."
         filterOption={(option, inputValue) => {
+          if(updateNodeData.length!=0){
           const animename = (option.data.animename || "")
             .toLowerCase()
             .includes(inputValue.toLowerCase());
@@ -341,7 +344,7 @@ useEffect(()=>{
               )
             : (option.data.shortname || "").toLowerCase().includes(inputValue.toLowerCase());
           return animename || anime_shortname;
-        }}
+        }}}
         
       />
       {updateNodeData.length!=0&&
@@ -381,7 +384,7 @@ useEffect(()=>{
             margin: "0 auto",
             cursor: "grab",
           }}
-          onClick={handleCanvasClick} // クリックイベントを追加
+          onClick={(e)=>handleCanvasClick(e)} // クリックイベントを追加
         ></canvas>
     
     </div>
