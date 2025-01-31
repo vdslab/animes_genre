@@ -17,6 +17,7 @@ const Graph = ({
   setClickNode,
   clickNode,
 }) => {
+  const [canvas,setCanvas]=useState(null)
   const [images, setImages] = useState([]);
   const canvasRef = useRef(null); // Canvas要素の参照
   const [transform, setTransform] = useState(d3.zoomIdentity); // 現在の変換（ズームとパン）
@@ -26,7 +27,7 @@ const Graph = ({
 
   // Canvasクリック時の処理
   const handleCanvasClick = (e) => {
-    const canvas = canvasRef.current;
+    setCanvas(canvasRef.current);
     const rect = canvas.getBoundingClientRect(); // キャンバスの位置とサイズを取得
     const x = (e.clientX - rect.left - transform.x) / transform.k; // 現在の変換を考慮したX座標
     const y = (e.clientY - rect.top - transform.y) / transform.k; // 現在の変換を考慮したY座標
@@ -239,12 +240,12 @@ const Graph = ({
         yearsnext={yearsnext}
         monthsnext={monthsnext}
         scaleStatus={scaleStatus}
-        startXY={{ x: transform.x, y: transform.y }}
-        setStartXY={(xy) =>
-          setTransform(d3.zoomIdentity.translate(xy.x, xy.y).scale(transform.k))
-        }
+        startXY={transform}
+        setStartXY={setTransform}
         zoomLevel={transform.k}
         clickNode={clickNodeInternal}
+        canvasmain={canvas}
+        zoomRef={zoomRef}
       />
 
       <div className="graph">

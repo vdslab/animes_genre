@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-
+import { useEffect } from "react";
+import * as d3 from "d3";
 const MiniGraph = ({
   zoomscale,
   nodedata,
@@ -14,7 +14,10 @@ const MiniGraph = ({
   startXY,
   setStartXY,
   zoomLevel,
-  clickNodeInternal
+  clickNodeInternal,
+  canvasmain,
+  zoomRef
+
 }) => {
   const nodes = nodedata;
 
@@ -26,8 +29,24 @@ const MiniGraph = ({
     const y = e.clientY - rect.top;  // マウスのY座標（キャンバス内での位置）
 
     // ズームレベルを考慮してクリック位置を調整
-    setStartXY({ x: x*zoomLevel*4 , y: y*zoomLevel*4});
-    console.log(x, y);
+    // (x, y)座標はズームレベルやキャンバス内の相対位置に依存します
+    const newStartXY = {
+      k: startXY.k,
+      x: -(x * 10 * 4) + 2400 / zoomLevel,
+      y: -(y * 10 * 4) + 2400 / zoomLevel
+    };
+    const newTransform = d3.zoomIdentity
+            .translate(
+              -(x * 10 * 4) + 2400 / zoomLevel ,
+              -(y * 10 * 4) + 2400 / zoomLevel
+            )
+            .scale(10);
+          d3.select(canvasmain)
+            .transition()
+            .duration(750)
+            .call(zoomRef.current.transform, newTransform);
+    // 状態を更新
+    setStartXY(newStartXY);
   };
 
   useEffect(() => {
@@ -67,20 +86,16 @@ const MiniGraph = ({
         ctx.fillStyle = clickNodeInternal === node ? "orange" : "blue"; // クリックされたノードをハイライト
         ctx.fill(); // 塗りつぶし
         ctx.closePath(); // パスを閉じる
-
-        // 赤い枠の描画
-        
       });
+
+      // 赤い枠の描画
       ctx.beginPath();
-        ctx.rect(startXY.x /zoomLevel/ 4, startXY.y/ zoomLevel / 4, 300 / zoomLevel, 300 / zoomLevel); // (x, y, 幅, 高さ)
-        ctx.strokeStyle = "red"; // 枠線の色
-        ctx.lineWidth = 5; // 枠線の太さ
-        ctx.stroke(); // 枠線描画
-        ctx.closePath();
-      return () => {
-        // クリーンアップ時にイベントリスナーを削除
-        canvas.removeEventListener("click", handleCanvasClick);
-      };
+      console.log(startXY);
+      ctx.rect(-(startXY.x) / 10 / 4, -(startXY.y) / 10 / 4, 300 / zoomLevel, 300 / zoomLevel); // (x, y, 幅, 高さ)
+      ctx.strokeStyle = "red"; // 枠線の色
+      ctx.lineWidth = 2.5; // 枠線の太さ
+      ctx.stroke(); // 枠線描画
+      ctx.closePath();
     }
   }, [
     nodedata,
@@ -91,7 +106,7 @@ const MiniGraph = ({
     select,
     yearsnext,
     monthsnext,
-    startXY,
+    startXY,  // ここでstartXYが更新されるたびに描画が更新されます
     zoomLevel,
     scaleStatus,
   ]);
@@ -111,5 +126,4 @@ const MiniGraph = ({
     </div>
   );
 };
-
 export default MiniGraph;
