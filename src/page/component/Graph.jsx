@@ -17,7 +17,6 @@ const Graph = ({
   setClickNode,
   clickNode,
 }) => {
-  const [stay,setStay]=useState(false)
   const [canvas,setCanvas]=useState(null)
   const [updateNodeData,setUpdateNodeData]=useState([])
   const [images, setImages] = useState([]);
@@ -165,9 +164,7 @@ const Graph = ({
         ) // ノード間の衝突防止
         .on("tick", ticked) // シミュレーションの更新
         .on("end", () =>{
-          setUpdateNodeData(nodedata)
-          setStatus(true)
-          setStay(true)});
+          setUpdateNodeData(nodedata)});
       // ノードの描画関数
       function ticked() {
         // Canvasをクリア
@@ -210,7 +207,7 @@ const Graph = ({
     
   }, [nodedata]);
 useEffect(()=>{
-  if (stay&&updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
+  if (status&&updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
     const width = canvas.width;
