@@ -142,7 +142,6 @@ const Graph = ({
 
   // 描画用のuseEffect
   useEffect(() => {
-    if (scaleStatus && nodedata.length > 0 ) {
       const canvas = canvasRef.current;
       console.log("動いてますか？")
       const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
@@ -203,10 +202,11 @@ const Graph = ({
       return () => {
         simulation.stop();
       };
-    }
+    
     
   }, [nodedata]);
 useEffect(()=>{
+  console.log("動いてません")
   if (status&&updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
