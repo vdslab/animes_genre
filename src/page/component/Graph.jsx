@@ -121,25 +121,28 @@ const Graph = ({
   // 画像の読み込み
   useEffect(() => {
     const loadImages = async () => {
-      const imagePromises = nodedata.map((node) => {
-        return new Promise((resolve) => {
-          const image = new Image();
-          image.src = node.coverImage;
+      for (let i = 0; i < nodedata.length; i++) {
+        const node = nodedata[i];
+        const image = new Image();
+        image.src = node.coverImage;
+  
+        // 画像が読み込まれるのを待つ
+        await new Promise((resolve) => {
           image.onload = () => resolve(image);
         });
-      });
-
-      // すべての画像が読み込まれるのを待つ
-      const loadedImages = await Promise.all(imagePromises);
-      setImages(loadedImages); // すべての画像が読み込まれたら状態を更新
+  
+        // 画像が読み込まれるたびに状態を更新
+        setImages((prevImages) => [...prevImages, image]);
+      }
     };
-
-    loadImages(); // 画像を非同期でロード
+  
+    loadImages(); // 画像を順番にロード
   }, [nodedata]);
+  
 
   // 描画用のuseEffect
   useEffect(() => {
-    if (scaleStatus && nodedata.length > 0 && images.length == 0) {
+    if (scaleStatus && nodedata.length > 0 ) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
       const width = canvas.width;
@@ -201,7 +204,7 @@ const Graph = ({
         simulation.stop();
       };
     }
-  }, [nodedata,clickNode]);
+  }, []);
 useEffect(()=>{
   if (updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
