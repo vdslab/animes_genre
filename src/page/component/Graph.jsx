@@ -157,7 +157,7 @@ const Graph = ({
       }
 
       // シミュレーション開始
-      simulation.alpha(!status ? 1.5 : 0).restart();
+      simulation.alpha(!status ? 2.5 : 0).restart();
       setStatus(true);
 
       // アンマウント時にシミュレーションを停止
@@ -254,7 +254,7 @@ const Graph = ({
         zoomRef={zoomRef}
       />
 
-      <div className="graph">
+     
         <canvas
           ref={canvasRef}
           id="Canvas"
@@ -268,7 +268,7 @@ const Graph = ({
           }}
           onClick={handleCanvasClick} // クリックイベントを追加
         ></canvas>
-      </div>
+    
     </div>
   );
 };

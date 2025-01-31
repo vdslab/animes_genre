@@ -12,7 +12,8 @@ import json
 
 with open('./data/animes_tests.json', 'r', encoding='utf-8') as f:
     datas = json.load(f)  # 辞書型に変換
-
+with open('./public/data/node.json', 'r', encoding='utf-8') as f:
+    datanode=json.load(f)
 def genre():
     data=[]
     filedata=[]
@@ -51,7 +52,7 @@ def genre():
          "y":float(reduced_data[i, 1]),
          "year": datas["anime_data"][i]["year"],
          "n": datas["anime_data"][i]["n"],
-         "description":datas["anime_data"][i]["description"],
+         "description":datanode["anime_data"][i]["description"],
          "startDate":datas["anime_data"][i]["startDate"],
          "endDate":datas["anime_data"][i]["endDate"],
          "studio":datas["anime_data"][i]["studio"],
@@ -110,7 +111,7 @@ def tags():
      "year": datas["anime_data"][i]["year"],
      "n": datas["anime_data"][i]["n"],
      "shortname": datas["anime_data"][i]["shortname"],
-     "description": datas["anime_data"][i]["description"],
+     "description": datanode[i]["description"],
      "startDate": datas["anime_data"][i]["startDate"],
      "endDate": datas["anime_data"][i]["endDate"],
      "studio": datas["anime_data"][i]["studio"],

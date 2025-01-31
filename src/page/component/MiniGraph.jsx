@@ -32,8 +32,8 @@ const MiniGraph = ({
     // (x, y)座標はズームレベルやキャンバス内の相対位置に依存します
     const newStartXY = {
       k: startXY.k,
-      x: -(x * 10 * 4) + 2400 / zoomLevel,
-      y: -(y * 10 * 4) + 2400 / zoomLevel
+      x: -(x * zoomLevel * 4),
+      y: -(y * zoomLevel * 4) 
     };
     const newTransform = d3.zoomIdentity
             .translate(
