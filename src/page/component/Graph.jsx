@@ -204,7 +204,7 @@ const Graph = ({
         simulation.stop();
       };
     }
-  }, []);
+  }, [nodedata]);
 useEffect(()=>{
   if (updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
@@ -372,7 +372,6 @@ useEffect(()=>{
         status={status}
       /></div>}
 
-     
         <canvas
           ref={canvasRef}
           id="Canvas"
