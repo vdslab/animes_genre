@@ -255,7 +255,7 @@ useEffect(()=>{
         const radius = allview
           ? nodeScale(alldata[index][select])
           : nodeScale(node[select][yearsnext][monthsnext]);
-        if (transform.k <= 1) {
+        if (transform.k <= 6) {
           ctx.beginPath();
           ctx.arc(x, y, radius, 0, Math.PI * 2);
           let color=null
@@ -380,7 +380,7 @@ useEffect(()=>{
         }}}
         
       />
-      {updateNodeData.length!=0&&
+     
       <div className="tool">
       <button onClick={()=>handleToolClick("plus") } style={transform.k==10?{opacity:0.5}:{opacity:1}}>＋</button>
       <button onClick={()=>handleToolClick("minus")} style={transform.k==0.5?{opacity:0.5}:{opacity:1}}>ー</button>
@@ -403,7 +403,7 @@ useEffect(()=>{
         canvasmain={canvas}
         zoomRef={zoomRef}
         status={status}
-      /></div>}
+      /></div>
 
         <canvas
           ref={canvasRef}
