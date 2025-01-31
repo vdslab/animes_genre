@@ -255,6 +255,7 @@ useEffect(()=>{
       });
 
       ctx.restore(); // 変換をリセット
+      setUpdateNodeData(nodedata)
 }},[scaleStatus,
   nodedata,
   transform,
