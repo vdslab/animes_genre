@@ -127,13 +127,6 @@ const ClickAfter = ({
             </div>
           ))}
 
-          <button
-            onClick={() => {
-              setClickNode(null);
-            }}
-          >
-            閉じる
-          </button>
         </div>
       )}
     </div>

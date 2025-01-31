@@ -277,7 +277,6 @@ useEffect(()=>{
       ctx.restore(); // 変換をリセット
       setUpdateNodeData(nodedata)
 }},[scaleStatus,
-  nodedata,
   transform,
   allview,
   alldata,
@@ -351,7 +350,7 @@ useEffect(()=>{
       <div className="tool">
       <button onClick={()=>handleToolClick("plus") } style={transform.k==10?{opacity:0.5}:{opacity:1}}>＋</button>
       <button onClick={()=>handleToolClick("minus")} style={transform.k==0.5?{opacity:0.5}:{opacity:1}}>ー</button>
-      <button onClick={()=>handleToolClick("all")}>ALL</button>
+      <button onClick={()=>handleToolClick("all")}>初期</button>
       <MiniGraph
         zoomscale={zoomscale}
         nodedata={updateNodeData}
