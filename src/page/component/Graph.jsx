@@ -203,7 +203,7 @@ const Graph = ({
     }
   }, [nodedata,clickNode]);
 useEffect(()=>{
-  if (scaleStatus && nodedata.length > 0 ) {
+  if (updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
     const width = canvas.width;
@@ -249,6 +249,23 @@ useEffect(()=>{
               ctx.stroke(); // 枠線を描画
             }
             ctx.restore(); // 状態をリセット
+          } else {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = clickNode === node ? "orange" : "blue"; // クリックされたノードをハイライト
+            ctx.fill(); // 塗りつぶし
+            ctx.closePath();
+            ctx.font = "1px Arial"; // フォントサイズとフォントタイプ
+            ctx.fillStyle = "#FF5733"; // 文字の色
+            ctx.textAlign = "center"; // 文字の配置（中央）
+            ctx.textBaseline = "middle"; // 文字の基準線（中央）
+
+            // 文字を描画
+            ctx.fillText("Now Loading!", x, y);
+
+            // 枠線付きで文字を描画（オプション）
+            ctx.strokeStyle = "black"; // 枠線の色
+            ctx.lineWidth = 2; // 枠線の太さ
           }
         }
         
