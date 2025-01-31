@@ -39,7 +39,7 @@ const MiniGraph = ({
     };
     const newTransform = d3.zoomIdentity
       .translate(newStartXY.x, newStartXY.y)
-      .scale(10);
+      .scale(zoomLevel);
     d3.select(canvasmain)
       .transition()
       .duration(750)

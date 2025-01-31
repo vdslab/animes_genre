@@ -26,6 +26,55 @@ const Graph = ({
   const zoomRef = useRef(null); // D3ズームインスタンスの参照
   const [status, setStatus] = useState(false);
 
+  const handleToolClick = (order) => {
+    const canvasElement = canvasRef.current;
+    if (!canvasElement) return; // canvasがnullの場合は何もしない
+  
+    const width = canvasElement.width;
+    const height = canvasElement.height;
+  
+    // 現在のズーム状態を取得
+    const currentTransform = transform;
+  
+    // 中心を基準にズームするための変換
+    const centerX = width / 2;
+    const centerY = height / 2;
+  
+    let newTransform;
+  
+    if (order === "all") {
+      // "ALL"ボタンの場合、ズームをリセットして全体を表示
+      newTransform = d3.zoomIdentity.translate(0, 0).scale(1);
+    } else if (order === "minus" && currentTransform.k > 0.5) {
+      // "minus"ボタンの場合、ズームアウト（中心を基準に）
+      const scaleDelta = currentTransform.k - 0.5;
+      newTransform = d3.zoomIdentity
+        .translate(
+          centerX - (centerX - currentTransform.x) * (scaleDelta) / currentTransform.k,
+          centerY - (centerY - currentTransform.y) * (scaleDelta) / currentTransform.k
+        )
+        .scale(currentTransform.k - 0.5);
+    } else if (order === "plus" && currentTransform.k < 10) {
+      // "plus"ボタンの場合、ズームイン（中心を基準に）
+      const scaleDelta = currentTransform.k + 0.5;
+      newTransform = d3.zoomIdentity
+        .translate(
+          centerX - (centerX - currentTransform.x) * (scaleDelta) / currentTransform.k,
+          centerY - (centerY - currentTransform.y) * (scaleDelta) / currentTransform.k
+        )
+        .scale(currentTransform.k + 0.5);
+    }
+  
+    if (newTransform) {
+      // 変換を適用
+      d3.select(canvasElement)
+        .transition()
+        .duration(750)
+        .call(zoomRef.current.transform, newTransform);
+    }
+  };
+  
+  
   // Canvasクリック時の処理
   const handleCanvasClick = (e) => {
     // canvasRef.currentがnullでないことを確認
@@ -131,7 +180,7 @@ const Graph = ({
           const radius = allview
             ? nodeScale(alldata[index][select])
             : nodeScale(node[select][yearsnext][monthsnext]);
-          if (transform.k < 9) {
+          if (transform.k < 6) {
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, Math.PI * 2);
             ctx.fillStyle = clickNode === node ? "orange" : "blue"; // クリックされたノードをハイライト
@@ -206,6 +255,10 @@ const Graph = ({
 
   return (
     <div>
+      <div className="tool">
+      <button onClick={()=>handleToolClick("plus") } style={transform.k==10?{opacity:0.5}:{opacity:1}}>＋</button>
+      <button onClick={()=>handleToolClick("minus")} style={transform.k==0.5?{opacity:0.5}:{opacity:1}}>ー</button>
+      <button onClick={()=>handleToolClick("all")}>ALL</button>
       <Select
         options={nodedata}
         value={clickNode}
@@ -241,6 +294,7 @@ const Graph = ({
         }}
         
       />
+       </div>
       {updateNodeData.length!=0&&
       <MiniGraph
         zoomscale={zoomscale}
