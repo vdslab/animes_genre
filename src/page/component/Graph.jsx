@@ -17,6 +17,7 @@ const Graph = ({
   setClickNode,
   clickNode,
 }) => {
+  const [stay,setStay]=useState(false)
   const [canvas,setCanvas]=useState(null)
   const [updateNodeData,setUpdateNodeData]=useState([])
   const [images, setImages] = useState([]);
@@ -165,7 +166,8 @@ const Graph = ({
         .on("tick", ticked) // シミュレーションの更新
         .on("end", () =>{
           setUpdateNodeData(nodedata)
-          setStatus(true)});
+          setStatus(true)
+          setStay(true)});
       // ノードの描画関数
       function ticked() {
         // Canvasをクリア
@@ -208,8 +210,7 @@ const Graph = ({
     
   }, [nodedata]);
 useEffect(()=>{
-  console.log("動いてません")
-  if (updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
+  if (stay&&updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
     const width = canvas.width;
