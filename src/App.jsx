@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import Graph from "./page/component/Graph";
 import ClickAfter from "./page/component/ClickAfter";
 import "./page/app.css";
-
+import { Loading } from "./page/component/Loding";
 function App() {
   const [pagestatus, setStatus] = useState(false);
   const [nodedata, setNodedata] = useState([]);
