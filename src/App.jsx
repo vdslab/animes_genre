@@ -191,7 +191,7 @@ function App() {
       <div></div>
     </div>
   ) : (
-    <div>読み込み中...</div>
+    <div></div>
   );
 }
 

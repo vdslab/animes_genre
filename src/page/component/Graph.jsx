@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import MiniGraph from "./MiniGraph";
 import Select from "react-select";
-
+import { Loading } from "./Loding";
 const Graph = ({
   scaleStatus,
   nodedata,
@@ -342,6 +342,7 @@ useEffect(()=>{
   return (
     <div>
       
+      
       <Select
         options={nodedata}
         value={clickNode}
@@ -440,7 +441,7 @@ useEffect(()=>{
     {hoversNode.animename}
   </div>
 )}
-
+{updateNodeData.length==0&&<div className="Load" ><Loading /></div>}
     </div>
   );
 };
