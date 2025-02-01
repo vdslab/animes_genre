@@ -191,7 +191,7 @@ function App() {
       <div></div>
     </div>
   ) : (
-    <div></div>
+    <div className="Load" ><Loading /></div>
   );
 }
 
