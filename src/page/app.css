@@ -2,8 +2,7 @@
   display: flex; /* 子要素を横並びに配置 */
   justify-content: space-around; /* 子要素間のスペースを均等に配置 */
   align-items: flex-start; /* 子要素を垂直方向に中央揃え */
-  margin-top: 20px; /* 上部に少しスペース */
-  height: 100%;
+  height: 93%;
 }
 .all_content{
   width: 100%;
@@ -16,7 +15,7 @@
 }
 header {
   height: 7%;
-  width: 100vw;
+  width: 100%;
 
   /* 上下10px 左右0px */
   /* padding: 10px 0px; */
@@ -49,13 +48,14 @@ header {
 
 .graph {
   border: 1px solid #ccc; /* グラフの枠線 */
-  
+  width: 100%;
+  height: 100%;
   border-radius: 5px; /* 角を丸くする */
   padding: 10px; /* グラフ内部のスペース */
   background-color: #f9f9f9; /* 背景色 */
 }
 .graph canvas{
-  width: 60%;
+  width: 100%;
   height: 100%;
 }
 html,
@@ -76,11 +76,10 @@ h1 {
 }
 
 .click_After {
-  width: 40vw; /* 幅を指定しておくと、中央配置がより安定します */
-  height: 100%;
+  width: 50%; /* 幅を指定しておくと、中央配置がより安定します */
+  height: calc(100% - 4px);
   border: 2px solid #ccc;
   border-radius: 10px; /* 角を丸く */
-  padding: 16px; /* 内側の余白 */
   background-color: #f9f9f9; /* 背景色 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 軽い影 */
   font-family: Arial, sans-serif;
@@ -139,11 +138,8 @@ h1 {
   background-color: #0056b3; /* ホバー時の色 */
 }
 
-.click_After div {
-  margin-bottom: 15px; /* 各項目の間隔を調整 */
-}
 #content {
-  height: 100vw;
+  height: 100%;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
