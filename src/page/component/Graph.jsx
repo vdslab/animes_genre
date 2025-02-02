@@ -174,8 +174,8 @@ const Graph = ({
       const canvas = canvasRef.current;
       console.log("動いてますか？")
       const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
-      const width = canvas.width;
-      const height = canvas.height;
+      const width= window.innerWidth
+      const height= window.innerHeight
 
       // D3 Force Simulation
       const simulation = d3
@@ -343,7 +343,7 @@ useEffect(()=>{
   }, []);
 
   return (
-    <div>
+    <div className="graph">
       <div className="tool">
       <button onClick={()=>handleToolClick("plus") } style={transform.k==10?{opacity:0.5}:{opacity:1}}>＋</button>
       <button onClick={()=>handleToolClick("minus")} style={transform.k==0.5?{opacity:0.5}:{opacity:1}}>ー</button>
