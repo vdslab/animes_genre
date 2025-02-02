@@ -18,7 +18,8 @@ const MiniGraph = ({
   clickNode,
   canvasmain,
   zoomRef,
-  status
+  status,
+  yearsanime
 }) => {
   const nodes = nodedata;
 
@@ -47,7 +48,7 @@ const MiniGraph = ({
     
     setStartXY(newStartXY);
   };
-
+  console.log(yearsanime)
   useEffect(() => {
     if (status) {
       const canvas = canvasRef.current;
@@ -57,6 +58,8 @@ const MiniGraph = ({
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         nodes.forEach((node, index) => {
+          
+          if(yearsanime==null||node.startDate.year==yearsanime){
           ctx.beginPath();
 
           if (!allview) {
@@ -82,7 +85,7 @@ const MiniGraph = ({
           ctx.fillStyle = clickNode === node ? "orange" : "blue";
           ctx.fill();
           ctx.closePath();
-        });
+      }})
 
         ctx.beginPath();
         ctx.rect(
@@ -110,6 +113,7 @@ const MiniGraph = ({
     startXY,
     zoomLevel,
     scaleStatus,
+    yearsanime
   ]);
 
   return (

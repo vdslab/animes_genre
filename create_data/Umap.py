@@ -12,33 +12,41 @@ import json
 import requests
 import re
 
+
 with open('./data/animes_tests.json', 'r', encoding='utf-8') as f:
     datas = json.load(f)  # 辞書型に変換
 with open('./public/data/node.json', 'r', encoding='utf-8') as f:
     datanode=json.load(f)
-        
-def fetch_description(name,description):
-    if description is None:
-        description = ""  # Noneの場合は空文字列にする
-    if description!= "":
-        description = re.sub(r'<[^>]*>', '', description)
-    else:
-        return description
+tags_list = list()  # グローバル変数名を変更
+
+def fetch_description(name, description):
+    print(description)
     
-    url = f"https://script.google.com/macros/s/AKfycbxwZewBANl5EuM-pnpbTgMwGryNhDapa3aTYCtBSFf5XIOVzgPmSTTxkiw8bj2fChl-AA/exec?text={description}&source=en&target=ja"
-    response = requests.get(url)
-    if response.status_code == 200:
-        try:
-            # レスポンスがJSON形式か確認し、変換
-            print(name)
-            return response.json()
-        except requests.exceptions.JSONDecodeError:
-            print(f"JSONDecodeError: レスポンスの内容はJSON形式ではありません。レスポンス内容: {response.text}")
-            return None
-    else:
-        # HTTPエラーの場合
-        print(f"HTTPエラー {response.status_code}: {response.text}")
-        return None
+    if len(description) == 0:
+        return []
+    
+    name_tag = list()
+    for d in description:
+        ds = re.sub(r'<[^>]*>', '', d["name"])
+        url = f"https://script.google.com/macros/s/AKfycbxwZewBANl5EuM-pnpbTgMwGryNhDapa3aTYCtBSFf5XIOVzgPmSTTxkiw8bj2fChl-AA/exec?text={ds}&source=en&target=ja"
+        
+        response = requests.get(url)
+        if response.status_code == 200:
+            try:
+                # レスポンスがJSON形式か確認し、変換
+                print(name)
+                res = response.json()
+                tags_list.append(res)  # グローバル変数ではなく、新しい変数名を使用
+                name_tag.append(res)
+                print(len(tags_list))
+            except requests.exceptions.JSONDecodeError:
+                print(f"JSONDecodeError: レスポンスの内容はJSON形式ではありません。レスポンス内容: {response.text}")
+        else:
+            # HTTPエラーの場合
+            print(f"HTTPエラー {response.status_code}: {response.text}")
+    
+    return name_tag
+            
 def genre():
     data=[]
     filedata=[]
@@ -136,7 +144,7 @@ def tags():
      "y": float(anime_mds_jittered[i, 1]),  # ジッターを適用したy
      "year": datas["anime_data"][i]["year"],
      "n": datas["anime_data"][i]["n"],
-     "tag":datas["anime_data"][i]["tag"],
+     "tag":fetch_description(datas["anime_data"][i]["name"],datas["anime_data"][i]["tag"]),
      "shortname": datas["anime_data"][i]["shortname"],
      "description": datanode[i]["description"],
      "startDate": datas["anime_data"][i]["startDate"],
@@ -149,10 +157,12 @@ def tags():
      "videoCount": datas["anime_data"][i]["videoCount"],
      "color": "blue"
     })
-
+    tags_set_list=list(set(tags_list))
 
     with open('./public/data/node.json', 'w', encoding='utf-8') as f:
         json.dump(filedata, f, ensure_ascii=False, indent=4)
+    with open("./public/data/tags.json", 'w', encoding='utf-8') as f:
+        json.dump(tags_set_list, f, ensure_ascii=False, indent=4)
 
 # # 可視化
 #     plt.figure(figsize=(6, 6))
