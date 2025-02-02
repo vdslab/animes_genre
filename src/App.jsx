@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import Graph from "./page/component/Graph";
 import ClickAfter from "./page/component/ClickAfter";
 import "./page/app.css";
+import Select from "react-select";
 import { Loading } from "./page/component/Loding";
 function App() {
   const [pagestatus, setStatus] = useState(false);
@@ -151,7 +152,101 @@ function App() {
     return () => clearInterval(intervalId);
   }, [stop, allview, yearsnext, monthsnext]); // sortDataとyearsnextが変更されるたびに最新の値を使う
 
-  return pagestatus ? (
+  return (
+    <div>
+      <header>
+
+    <h2>アニメ探索マップ</h2>
+    <Select
+        options={nodedata}
+        value={clickNode}
+        getOptionLabel={(option) => option.animename || "Unknown Anime"}
+        onChange={(option) => {
+          if(updateNodeData.length!=0){
+          setClickNode(option);
+          // 選択されたノードを中心にズーム
+          if (zoomRef.current) {
+            const canvas = canvasRef.current;
+            const newTransform = d3.zoomIdentity
+              .translate(
+                canvas.width / 2 - option.x * 10,
+                canvas.height / 2 - option.y * 10
+              )
+              .scale(10);
+            d3.select(canvas)
+              .transition()
+              .duration(750)
+              .call(zoomRef.current.transform, newTransform);
+          }
+        }
+        }}
+        placeholder="アニメを検索..."
+        filterOption={(option, inputValue) => {
+          if(updateNodeData.length!=0){
+          const animename = (option.data.animename || "")
+            .toLowerCase()
+            .includes(inputValue.toLowerCase());
+          const anime_shortname = Array.isArray(option.data.shortname)
+            ? option.data.shortname.some((item) =>
+                item.toLowerCase().includes(inputValue.toLowerCase())
+              )
+            : (option.data.shortname || "").toLowerCase().includes(inputValue.toLowerCase());
+          return animename || anime_shortname;
+        }}}
+        
+      />
+      <div className="Box">
+        <div style={{ textAlign: "center" }}>
+          <div>
+            <input
+              type="checkbox"
+              checked={allview}
+              onChange={() => {
+                setScaleStatus(false);
+                setAllview(!allview);
+              }}
+            />
+            <label>総合を見る</label>
+          </div>
+        </div>
+
+        
+        </div>
+      </header>
+      {!allview && (
+          <div>
+            <h3>
+              {yearsnext}年{monthsnext}月
+            </h3>
+            {!stop ? (
+              <button onClick={() => setStop(true)}>STOP</button>
+            ) : (
+              <button onClick={() => setStop(false)}>START</button>
+            )}
+            <input
+              type="range"
+              min="0"
+              max={(years.length - 1) * months.length}
+              value={
+                years.findIndex((item) => item === yearsnext) * 12 +
+                months.findIndex((item) => item === monthsnext)
+              }
+              onChange={(e) => {
+                setScaleStatus(false);
+                setYearsnext(
+                  years[(e.target.value - (e.target.value % 12)) / 12]
+                );
+                setMonthsnext(months[e.target.value % 12]);
+              }}
+              style={{
+                width: "300px",
+                display: "block",
+                margin: "0 auto",
+              }}
+            />
+          </div>
+        )}
+    {pagestatus ? (
     <div className="container">
       
 
@@ -192,7 +287,9 @@ function App() {
     </div>
   ) : (
     <div className="Load" ><Loading /></div>
-  );
+  )}
+</div>
+)
 }
 
 export default App;

@@ -53,55 +53,7 @@ const ClickAfter = ({
 
   return (
     <div className="click_After">
-      <div className="Box">
-        <div style={{ textAlign: "center" }}>
-          <div>
-            <input
-              type="checkbox"
-              checked={allview}
-              onChange={() => {
-                setScaleStatus(false);
-                setAllview(!allview);
-              }}
-            />
-            <label>総合を見る</label>
-          </div>
-        </div>
-
-        {!allview && (
-          <div>
-            <h3>
-              {yearsnext}年{monthsnext}月
-            </h3>
-            {!stop ? (
-              <button onClick={() => setStop(true)}>STOP</button>
-            ) : (
-              <button onClick={() => setStop(false)}>START</button>
-            )}
-            <input
-              type="range"
-              min="0"
-              max={(years.length - 1) * months.length}
-              value={
-                years.findIndex((item) => item === yearsnext) * 12 +
-                months.findIndex((item) => item === monthsnext)
-              }
-              onChange={(e) => {
-                setScaleStatus(false);
-                setYearsnext(
-                  years[(e.target.value - (e.target.value % 12)) / 12]
-                );
-                setMonthsnext(months[e.target.value % 12]);
-              }}
-              style={{
-                width: "300px",
-                display: "block",
-                margin: "0 auto",
-              }}
-            />
-          </div>
-        )}
-      </div>
+      
 
       {clickNode == null ? (
       

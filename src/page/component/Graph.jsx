@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import MiniGraph from "./MiniGraph";
-import Select from "react-select";
 import { Loading } from "./Loding";
 const Graph = ({
   scaleStatus,
@@ -237,8 +236,8 @@ useEffect(()=>{
   if (status&&updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
-    const width = canvas.width;
-    const height = canvas.height;
+    const width= window.innerWidth
+    const height= window.innerHeight
       // Canvasをクリア
       ctx.clearRect(0, 0, width, height);
 
@@ -341,47 +340,6 @@ useEffect(()=>{
 
   return (
     <div>
-      
-      
-      <Select
-        options={nodedata}
-        value={clickNode}
-        getOptionLabel={(option) => option.animename || "Unknown Anime"}
-        onChange={(option) => {
-          if(updateNodeData.length!=0){
-          setClickNode(option);
-          // 選択されたノードを中心にズーム
-          if (zoomRef.current) {
-            const canvas = canvasRef.current;
-            const newTransform = d3.zoomIdentity
-              .translate(
-                canvas.width / 2 - option.x * 10,
-                canvas.height / 2 - option.y * 10
-              )
-              .scale(10);
-            d3.select(canvas)
-              .transition()
-              .duration(750)
-              .call(zoomRef.current.transform, newTransform);
-          }
-        }
-        }}
-        placeholder="アニメを検索..."
-        filterOption={(option, inputValue) => {
-          if(updateNodeData.length!=0){
-          const animename = (option.data.animename || "")
-            .toLowerCase()
-            .includes(inputValue.toLowerCase());
-          const anime_shortname = Array.isArray(option.data.shortname)
-            ? option.data.shortname.some((item) =>
-                item.toLowerCase().includes(inputValue.toLowerCase())
-              )
-            : (option.data.shortname || "").toLowerCase().includes(inputValue.toLowerCase());
-          return animename || anime_shortname;
-        }}}
-        
-      />
-     
       <div className="tool">
       <button onClick={()=>handleToolClick("plus") } style={transform.k==10?{opacity:0.5}:{opacity:1}}>＋</button>
       <button onClick={()=>handleToolClick("minus")} style={transform.k==0.5?{opacity:0.5}:{opacity:1}}>ー</button>
@@ -409,15 +367,14 @@ useEffect(()=>{
         <canvas
           ref={canvasRef}
           id="Canvas"
-          width="1200"
-          height="1200"
           style={hoversNode!=null?{
             border: "1px solid #ccc",
             display: "block",
             margin: "0 auto",
             cursor: "pointer",
           }:
-        { border: "1px solid #ccc",
+        { 
+          border: "1px solid #ccc",
           display: "block",
           margin: "0 auto",
           cursor: "grab",}}

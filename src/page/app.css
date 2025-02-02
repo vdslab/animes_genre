@@ -3,11 +3,27 @@
   justify-content: space-around; /* 子要素間のスペースを均等に配置 */
   align-items: flex-start; /* 子要素を垂直方向に中央揃え */
   margin-top: 20px; /* 上部に少しスペース */
+  height: 100vw;
+  width: 100%;
 }
 .tool {
   position: fixed; /* 画面の固定位置 */
   bottom: 0px; /* 下端からの距離 */
   left: 0px; /* 左端からの距離 */
+}
+header {
+  height: 7%;
+  width: 100vw;
+
+  /* 上下10px 左右0px */
+  /* padding: 10px 0px; */
+
+  /* background-color: #d1d2c8; */
+  background-color: gray;
+  /* text-align: center; */
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
 }
 .Load{
   background-color:rgba(250, 250, 250, 0.8);
@@ -30,11 +46,15 @@
 
 .graph {
   border: 1px solid #ccc; /* グラフの枠線 */
+  
   border-radius: 5px; /* 角を丸くする */
   padding: 10px; /* グラフ内部のスペース */
   background-color: #f9f9f9; /* 背景色 */
 }
-
+.graph canvas{
+  width: 60%;
+  height: 100%;
+}
 html,
 body {
   margin: 0; /* デフォルトの余白を削除 */
@@ -51,15 +71,13 @@ h1 {
 }
 
 .click_After {
-  height: 1200px;
+  width: 40vw; /* 幅を指定しておくと、中央配置がより安定します */
+  height: 100vw;
   overflow-y: auto;
   border: 2px solid #ccc;
-  border-radius: 8px; /* 角を丸める */
-  padding: 16px; /* 内側の余白 */
-  width: 80%;
-  padding: 20px;
-  background-color: #f9f9f9; /* 背景色 */
   border-radius: 10px; /* 角を丸く */
+  padding: 16px; /* 内側の余白 */
+  background-color: #f9f9f9; /* 背景色 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 軽い影 */
   font-family: Arial, sans-serif;
 }

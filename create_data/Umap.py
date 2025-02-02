@@ -9,14 +9,40 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics import pairwise_distances
 
 import json
+import requests
+import re
 
 with open('./data/animes_tests.json', 'r', encoding='utf-8') as f:
     datas = json.load(f)  # 辞書型に変換
 with open('./public/data/node.json', 'r', encoding='utf-8') as f:
     datanode=json.load(f)
+        
+def fetch_description(name,description):
+    if description is None:
+        description = ""  # Noneの場合は空文字列にする
+    if description!= "":
+        description = re.sub(r'<[^>]*>', '', description)
+    else:
+        return description
+    
+    url = f"https://script.google.com/macros/s/AKfycbxwZewBANl5EuM-pnpbTgMwGryNhDapa3aTYCtBSFf5XIOVzgPmSTTxkiw8bj2fChl-AA/exec?text={description}&source=en&target=ja"
+    response = requests.get(url)
+    if response.status_code == 200:
+        try:
+            # レスポンスがJSON形式か確認し、変換
+            print(name)
+            return response.json()
+        except requests.exceptions.JSONDecodeError:
+            print(f"JSONDecodeError: レスポンスの内容はJSON形式ではありません。レスポンス内容: {response.text}")
+            return None
+    else:
+        # HTTPエラーの場合
+        print(f"HTTPエラー {response.status_code}: {response.text}")
+        return None
 def genre():
     data=[]
     filedata=[]
+    
 
     for i in datas["anime_data"]:
         if i["genres"] != "不明":
