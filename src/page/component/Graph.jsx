@@ -15,12 +15,13 @@ const Graph = ({
   alldata,
   setClickNode,
   clickNode,
+  canvasRef
 }) => {
   const [mouseXY,setMouseXY]=useState({x:0,y:0})
   const [canvas,setCanvas]=useState(null)
   const [updateNodeData,setUpdateNodeData]=useState([])
   const [images, setImages] = useState([]);
-  const canvasRef = useRef(null); // Canvas要素の参照
+  
   const [transform, setTransform] = useState(d3.zoomIdentity); // 現在の変換（ズームとパン）
   const [clickNodeInternal, setClickNodeInternal] = useState(null); // 内部クリックノード状態
   const zoomRef = useRef(null); // D3ズームインスタンスの参照

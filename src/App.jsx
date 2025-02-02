@@ -23,6 +23,8 @@ function App() {
   const [stop, setStop] = useState(false);
   const intervalIdRef = useRef(null);
   const [scaleStatus, setScaleStatus] = useState(false);
+  const canvasRef = useRef(null); // Canvas要素の参照
+  
   const years = [
     2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
     2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025,
@@ -157,12 +159,13 @@ function App() {
       <header>
 
     <h2>アニメ探索マップ</h2>
-    <Select
-        options={nodedata}
+    
+      <Select
+      options={nodedata}
         value={clickNode}
         getOptionLabel={(option) => option.animename || "Unknown Anime"}
         onChange={(option) => {
-          if(updateNodeData.length!=0){
+          if(nodedata.length!=0){
           setClickNode(option);
           // 選択されたノードを中心にズーム
           if (zoomRef.current) {
@@ -182,7 +185,7 @@ function App() {
         }}
         placeholder="アニメを検索..."
         filterOption={(option, inputValue) => {
-          if(updateNodeData.length!=0){
+          if(nodedata.length!=0){
           const animename = (option.data.animename || "")
             .toLowerCase()
             .includes(inputValue.toLowerCase());
@@ -193,8 +196,7 @@ function App() {
             : (option.data.shortname || "").toLowerCase().includes(inputValue.toLowerCase());
           return animename || anime_shortname;
         }}}
-        
-      />
+        />
       <div className="Box">
         <div style={{ textAlign: "center" }}>
           <div>
@@ -264,6 +266,7 @@ function App() {
         alldata={alldata}
         setClickNode={setClickNode}
         clickNode={clickNode}
+        canvasRef={canvasRef}
       />
       <ClickAfter
         allview={allview}
