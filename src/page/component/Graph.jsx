@@ -22,7 +22,6 @@ const Graph = ({
   const [canvas,setCanvas]=useState(null)
   const [updateNodeData,setUpdateNodeData]=useState([])
   const [images, setImages] = useState([]);
-  
   const [transform, setTransform] = useState(d3.zoomIdentity); // 現在の変換（ズームとパン）
   const [clickNodeInternal, setClickNodeInternal] = useState(null); // 内部クリックノード状態
   const zoomRef = useRef(null); // D3ズームインスタンスの参照
@@ -174,8 +173,8 @@ const Graph = ({
       const canvas = canvasRef.current;
       console.log("動いてますか？")
       const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
-      const width= window.innerWidth
-      const height= window.innerHeight
+      const width = canvas.width;
+      const height = canvas.height;
 
       // D3 Force Simulation
       const simulation = d3
@@ -239,8 +238,8 @@ useEffect(()=>{
   if (status&&updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
-    const width= window.innerWidth
-    const height= window.innerHeight
+    const width = canvas.width;
+    const height = canvas.height;
       // Canvasをクリア
       ctx.clearRect(0, 0, width, height);
 
