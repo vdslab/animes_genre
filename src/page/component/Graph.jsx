@@ -15,7 +15,8 @@ const Graph = ({
   alldata,
   setClickNode,
   clickNode,
-  canvasRef
+  canvasRef,
+  yearsanime
 }) => {
   const [mouseXY,setMouseXY]=useState({x:0,y:0})
   const [canvas,setCanvas]=useState(null)
@@ -234,6 +235,7 @@ const Graph = ({
     
   }, [nodedata,scaleStatus]);
 useEffect(()=>{
+  console.log(yearsanime)
   if (status&&updateNodeData.length!=0&&scaleStatus && nodedata.length > 0 ) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
@@ -246,12 +248,11 @@ useEffect(()=>{
       ctx.save();
       ctx.translate(transform.x, transform.y);
       ctx.scale(transform.k, transform.k);
-
       // ノードを描画
       nodedata.forEach((node, index) => {
-        const x = node.x; // シミュレーションで決定されたx座標
-        const y = node.y; // シミュレーションで決定されたy座標
-
+        if(yearsanime==null||node.startDate.year==yearsanime){
+          const x=node.x
+          const y=node.y
         const radius = allview
           ? nodeScale(alldata[index][select])
           : nodeScale(node[select][yearsnext][monthsnext]);
@@ -308,7 +309,8 @@ useEffect(()=>{
           }
         }
         
-      });
+      }});
+      
 
       ctx.restore(); // 変換をリセット
       setUpdateNodeData(nodedata)
@@ -320,6 +322,7 @@ useEffect(()=>{
   monthsnext,
   clickNodeInternal,
   images, // imagesの状態に依存
+  yearsanime
   ])
   // D3 Zoomの設定
   useEffect(() => {
@@ -363,6 +366,7 @@ useEffect(()=>{
         canvasmain={canvas}
         zoomRef={zoomRef}
         status={status}
+        yearsanime={yearsanime}
       /></div>
 
         <canvas

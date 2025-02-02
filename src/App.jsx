@@ -24,6 +24,7 @@ function App() {
   const intervalIdRef = useRef(null);
   const [scaleStatus, setScaleStatus] = useState(false);
   const canvasRef = useRef(null); // Canvas要素の参照
+  const [yearsanime,setYearsanime]=useState(null)
   
   const years = [
     2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
@@ -155,7 +156,7 @@ function App() {
   }, [stop, allview, yearsnext, monthsnext]); // sortDataとyearsnextが変更されるたびに最新の値を使う
 
   return (
-    <div>
+    <div className="all_content">
       <header>
 
     <h2>アニメ探索マップ</h2>
@@ -197,28 +198,18 @@ function App() {
           return animename || anime_shortname;
         }}}
         />
-      <div className="Box">
-        <div style={{ textAlign: "center" }}>
-          <div>
-            <input
-              type="checkbox"
-              checked={allview}
-              onChange={() => {
+          
+            {/* <button
+              onClick={() => {
                 setScaleStatus(false);
                 setAllview(!allview);
-              }}
-            />
-            <label>総合を見る</label>
-          </div>
-        </div>
-
-        
-        </div>
-      </header>
-      {!allview && (
-          <div>
+              }}>
+            人気の推移を見る</button>
+             {!allview && (
+          <div style={{ textAlign: "center" }}>
             <h3>
-              {yearsnext}年{monthsnext}月
+              {yearsnext}年{monthsnext}月 時点の<br />
+              人気度
             </h3>
             {!stop ? (
               <button onClick={() => setStop(true)}>STOP</button>
@@ -247,7 +238,23 @@ function App() {
               }}
             />
           </div>
-        )}
+        )} */}
+          
+        <Select
+            options={
+                      years.map(year => ({ value: year, label: `${year}年` }))  // 数字を文字列に変換してlabelにセット
+                      }
+            value={yearsanime ? { value: yearsanime, label: `${yearsanime}年` } : null}  // 数字を文字列に変換してvalueにセット
+            getOptionLabel={(option) => option.label}  // オプションラベルの取得
+            onChange={(option) => setYearsanime(option ? option.value : null)}  // 選択された値をセット
+            placeholder="アニメの放送時期を選んでください"  // プレースホルダ
+            isClearable
+      />
+      
+
+        
+      </header>
+     
     {pagestatus ? (
     <div className="container">
       
@@ -267,6 +274,7 @@ function App() {
         setClickNode={setClickNode}
         clickNode={clickNode}
         canvasRef={canvasRef}
+        yearsanime={yearsanime}
       />
       <ClickAfter
         allview={allview}
@@ -284,6 +292,7 @@ function App() {
         setYearsnext={setYearsnext}
         setMonthsnext={setMonthsnext}
         setSelect={setSelect}
+        
       />
 
       <div></div>
