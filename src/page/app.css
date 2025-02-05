@@ -4,7 +4,7 @@
   align-items: flex-start; /* 子要素を垂直方向に中央揃え */
   height: 93%;
 }
-.all_content{
+.all_content {
   width: 100%;
   height: 100%;
 }
@@ -27,17 +27,16 @@ header {
   align-items: center;
   box-sizing: border-box;
 }
-.Load{
-  background-color:rgba(250, 250, 250, 0.8);
+.Load {
+  background-color: rgba(250, 250, 250, 0.8);
   left: 0px;
-  top:0px;
-  width:100%;
-  height:100%;
+  top: 0px;
+  width: 100%;
+  height: 100%;
   position: absolute;
   position: fixed; /* 画面の固定位置 */
 }
 .mini_graph canvas {
-
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
@@ -54,7 +53,7 @@ header {
   padding: 10px; /* グラフ内部のスペース */
   background-color: #f9f9f9; /* 背景色 */
 }
-.graph canvas{
+.graph canvas {
   width: 100%;
   height: 100%;
 }
@@ -76,7 +75,7 @@ h1 {
 }
 
 .click_After {
-  width: 50%; /* 幅を指定しておくと、中央配置がより安定します */
+  width: 30%; /* 幅を指定しておくと、中央配置がより安定します */
   height: calc(100% - 4px);
   border: 2px solid #ccc;
   border-radius: 10px; /* 角を丸く */
