@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import * as d3 from "d3";
-import Graph from "./page/component/Graph";
-import ClickAfter from "./page/component/ClickAfter";
-import "./page/app.css";
+import Graph from "./features/dashboad/components/Graph";
+import ClickAfter from "./pages/components/ClickAfter";
+import "../app.css";
 import Select from "react-select";
-import { Loading } from "./page/component/Loding";
+import { Loading } from "./common/loading/components/Loding";
 function App() {
   const [pagestatus, setStatus] = useState(false);
   const [nodedata, setNodedata] = useState([]);
-  const [mininodeData,setMininodeData]=useState([])
+  const [mininodeData, setMininodeData] = useState([]);
   const [scales, setScales] = useState({});
   const svgRef = useRef(null); // SVG を参照するための useRef
   const zoomRef = useRef(null);
@@ -24,8 +24,10 @@ function App() {
   const intervalIdRef = useRef(null);
   const [scaleStatus, setScaleStatus] = useState(false);
   const canvasRef = useRef(null); // Canvas要素の参照
-  const [yearsanime,setYearsanime]=useState(null)
-  
+  const [yearsanime, setYearsanime] = useState(null);
+  const [width, setWidth] = useState(null);
+  const [height, setHeight] = useState(null);
+
   const years = [
     2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
     2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025,
@@ -94,7 +96,7 @@ function App() {
   }, [alldata, allview, select, yearsnext, monthsnext]);
 
   const scalemake = (data) => {
-    console.log(1)
+    console.log(1);
     let scale = {};
     // 座標のスケール
     let xmax = data[0].x;
@@ -119,17 +121,17 @@ function App() {
 
     scale["xScale"] = d3.scaleLinear().domain([xmin, xmax]).range([200, 1100]);
     scale["yScale"] = d3.scaleLinear().domain([ymin, ymax]).range([200, 1100]);
-    
-    data.map((node)=>{
-      node.x=scale["xScale"](node.x)
-      node.y=scale["yScale"](node.y)
-    })
-    console.log("1")
-    setNodedata(data)
-    setMininodeData(data)
+
+    data.map((node) => {
+      node.x = scale["xScale"](node.x);
+      node.y = scale["yScale"](node.y);
+    });
+    console.log("1");
+    setNodedata(data);
+    setMininodeData(data);
     return scale;
   };
-  
+
   useEffect(() => {
     const timerId = (g) => {
       if (!stop && !allview) {
@@ -158,48 +160,50 @@ function App() {
   return (
     <div className="all_content">
       <header>
+        <h2>アニメ探索マップ</h2>
 
-    <h2>アニメ探索マップ</h2>
-    
-      <Select
-      options={nodedata}
-        value={clickNode}
-        getOptionLabel={(option) => option.animename || "Unknown Anime"}
-        onChange={(option) => {
-          if(nodedata.length!=0){
-          setClickNode(option);
-          // 選択されたノードを中心にズーム
-          if (zoomRef.current) {
-            const canvas = canvasRef.current;
-            const newTransform = d3.zoomIdentity
-              .translate(
-                canvas.width / 2 - option.x * 10,
-                canvas.height / 2 - option.y * 10
-              )
-              .scale(10);
-            d3.select(canvas)
-              .transition()
-              .duration(750)
-              .call(zoomRef.current.transform, newTransform);
-          }
-        }
-        }}
-        placeholder="アニメを検索..."
-        filterOption={(option, inputValue) => {
-          if(nodedata.length!=0){
-          const animename = (option.data.animename || "")
-            .toLowerCase()
-            .includes(inputValue.toLowerCase());
-          const anime_shortname = Array.isArray(option.data.shortname)
-            ? option.data.shortname.some((item) =>
-                item.toLowerCase().includes(inputValue.toLowerCase())
-              )
-            : (option.data.shortname || "").toLowerCase().includes(inputValue.toLowerCase());
-          return animename || anime_shortname;
-        }}}
+        <Select
+          options={nodedata}
+          value={clickNode}
+          getOptionLabel={(option) => option.animename || "Unknown Anime"}
+          onChange={(option) => {
+            if (nodedata.length != 0) {
+              setClickNode(option);
+              // 選択されたノードを中心にズーム
+              if (zoomRef.current) {
+                const canvas = canvasRef.current;
+                const newTransform = d3.zoomIdentity
+                  .translate(
+                    canvas.width / 2 - option.x * 10,
+                    canvas.height / 2 - option.y * 10
+                  )
+                  .scale(10);
+                d3.select(canvas)
+                  .transition()
+                  .duration(750)
+                  .call(zoomRef.current.transform, newTransform);
+              }
+            }
+          }}
+          placeholder="アニメを検索..."
+          filterOption={(option, inputValue) => {
+            if (nodedata.length != 0) {
+              const animename = (option.data.animename || "")
+                .toLowerCase()
+                .includes(inputValue.toLowerCase());
+              const anime_shortname = Array.isArray(option.data.shortname)
+                ? option.data.shortname.some((item) =>
+                    item.toLowerCase().includes(inputValue.toLowerCase())
+                  )
+                : (option.data.shortname || "")
+                    .toLowerCase()
+                    .includes(inputValue.toLowerCase());
+              return animename || anime_shortname;
+            }
+          }}
         />
-          
-            {/* <button
+
+        {/* <button
               onClick={() => {
                 setScaleStatus(false);
                 setAllview(!allview);
@@ -239,69 +243,67 @@ function App() {
             />
           </div>
         )} */}
-          
+
         <Select
-            options={
-                      years.map(year => ({ value: year, label: `${year}年` }))  // 数字を文字列に変換してlabelにセット
-                      }
-            value={yearsanime ? { value: yearsanime, label: `${yearsanime}年` } : null}  // 数字を文字列に変換してvalueにセット
-            getOptionLabel={(option) => option.label}  // オプションラベルの取得
-            onChange={(option) => setYearsanime(option ? option.value : null)}  // 選択された値をセット
-            placeholder="アニメの放送時期を選んでください"  // プレースホルダ
-            isClearable
-      />
-      
-
-        
+          options={
+            years.map((year) => ({ value: year, label: `${year}年` })) // 数字を文字列に変換してlabelにセット
+          }
+          value={
+            yearsanime ? { value: yearsanime, label: `${yearsanime}年` } : null
+          } // 数字を文字列に変換してvalueにセット
+          getOptionLabel={(option) => option.label} // オプションラベルの取得
+          onChange={(option) => setYearsanime(option ? option.value : null)} // 選択された値をセット
+          placeholder="アニメの放送時期を選んでください" // プレースホルダ
+          isClearable
+        />
       </header>
-     
-    {pagestatus ? (
-    <div className="container">
-      
 
-      <Graph
-        svgRef={svgRef}
-        scaleStatus={scaleStatus}
-        nodedata={nodedata}
-        zoomscale={zoomscale}
-        allview={allview}
-        select={select}
-        yearsnext={yearsnext}
-        monthsnext={monthsnext}
-        scales={scales}
-        nodeScale={nodeScale}
-        alldata={alldata}
-        setClickNode={setClickNode}
-        clickNode={clickNode}
-        canvasRef={canvasRef}
-        yearsanime={yearsanime}
-      />
-      <ClickAfter
-        allview={allview}
-        setAllview={setAllview}
-        setScaleStatus={setScaleStatus}
-        nodedata={nodedata}
-        clickNode={clickNode}
-        setClickNode={setClickNode}
-        yearsnext={yearsnext}
-        monthsnext={monthsnext}
-        stop={stop}
-        setStop={setStop}
-        years={years}
-        months={months}
-        setYearsnext={setYearsnext}
-        setMonthsnext={setMonthsnext}
-        setSelect={setSelect}
-        
-      />
+      {pagestatus ? (
+        <div className="container">
+          <Graph
+            svgRef={svgRef}
+            scaleStatus={scaleStatus}
+            nodedata={nodedata}
+            zoomscale={zoomscale}
+            allview={allview}
+            select={select}
+            yearsnext={yearsnext}
+            monthsnext={monthsnext}
+            scales={scales}
+            nodeScale={nodeScale}
+            alldata={alldata}
+            setClickNode={setClickNode}
+            clickNode={clickNode}
+            canvasRef={canvasRef}
+            yearsanime={yearsanime}
+          />
+          <ClickAfter
+            allview={allview}
+            setAllview={setAllview}
+            setScaleStatus={setScaleStatus}
+            nodedata={nodedata}
+            clickNode={clickNode}
+            setClickNode={setClickNode}
+            yearsnext={yearsnext}
+            monthsnext={monthsnext}
+            stop={stop}
+            setStop={setStop}
+            years={years}
+            months={months}
+            setYearsnext={setYearsnext}
+            setMonthsnext={setMonthsnext}
+            setSelect={setSelect}
+          />
 
-      <div></div>
+          <div></div>
+        </div>
+      ) : (
+        <div className="Load">
+          <Loading />
+        </div>
+      )}
     </div>
-  ) : (
-    <div className="Load" ><Loading /></div>
-  )}
-</div>
-)
+  );
 }
 
 export default App;

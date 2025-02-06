@@ -16,10 +16,9 @@ const MiniGraph = ({
   setStartXY,
   zoomLevel,
   clickNode,
-  canvasmain,
   zoomRef,
   status,
-  yearsanime
+  yearsanime,
 }) => {
   const nodes = nodedata;
 
@@ -35,8 +34,8 @@ const MiniGraph = ({
 
     const newStartXY = {
       k: startXY.k,
-      x: (-(x - 300 / zoomLevel / 2) * zoomLevel) * 4,
-      y: (-(y - 300 / zoomLevel / 2) * zoomLevel) * 4,
+      x: -(x - 300 / zoomLevel / 2) * zoomLevel * 4,
+      y: -(y - 300 / zoomLevel / 2) * zoomLevel * 4,
     };
     const newTransform = d3.zoomIdentity
       .translate(newStartXY.x, newStartXY.y)
@@ -45,10 +44,9 @@ const MiniGraph = ({
       .transition()
       .duration(750)
       .call(zoomRef.current.transform, newTransform);
-    
+
     setStartXY(newStartXY);
   };
-  console.log(yearsanime)
   useEffect(() => {
     if (status) {
       const canvas = canvasRef.current;
@@ -58,39 +56,39 @@ const MiniGraph = ({
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         nodes.forEach((node, index) => {
-          
-          if(yearsanime==null||node.startDate.year==yearsanime){
-          ctx.beginPath();
+          if (yearsanime == null || node.startDate.year == yearsanime) {
+            ctx.beginPath();
 
-          if (!allview) {
-            if (node[select][yearsnext][monthsnext] !== 0) {
+            if (!allview) {
+              if (node[select][yearsnext][monthsnext] !== 0) {
+                ctx.arc(
+                  node.x / 4,
+                  node.y / 4,
+                  nodeScale(node[select][yearsnext][monthsnext]) / 4,
+                  0,
+                  Math.PI * 2
+                );
+              }
+            } else {
               ctx.arc(
                 node.x / 4,
                 node.y / 4,
-                nodeScale(node[select][yearsnext][monthsnext]) / 4,
+                nodeScale(alldata[index][select]) / 4,
                 0,
                 Math.PI * 2
               );
             }
-          } else {
-            ctx.arc(
-              node.x / 4,
-              node.y / 4,
-              nodeScale(alldata[index][select]) / 4,
-              0,
-              Math.PI * 2
-            );
-          }
 
-          ctx.fillStyle = clickNode === node ? "orange" : "blue";
-          ctx.fill();
-          ctx.closePath();
-      }})
+            ctx.fillStyle = clickNode === node ? "orange" : "blue";
+            ctx.fill();
+            ctx.closePath();
+          }
+        });
 
         ctx.beginPath();
         ctx.rect(
-          -(startXY.x) / zoomLevel / 4,
-          -(startXY.y) / zoomLevel / 4,
+          -startXY.x / zoomLevel / 4,
+          -startXY.y / zoomLevel / 4,
           300 / zoomLevel,
           300 / zoomLevel
         );
@@ -113,14 +111,14 @@ const MiniGraph = ({
     startXY,
     zoomLevel,
     scaleStatus,
-    yearsanime
+    yearsanime,
   ]);
 
   return (
     <div className="mini_graph">
       {scaleStatus ? (
         <canvas
-          ref={canvasRef}  // refを設定
+          ref={canvasRef} // refを設定
           width="300"
           height="300"
           onClick={handleCanvasClick}
