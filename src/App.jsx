@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import * as d3 from "d3";
-import Graph from "./page/components/Graph";
-import ClickAfter from "./page/components/ClickAfter";
-import "./page/app.css";
+import Graph from "./features/dashboad/components/Graph";
+import ClickAfter from "./pages/components/ClickAfter";
+import "../app.css";
 import Select from "react-select";
-import { Loading } from "./page/components/Loding";
+import { Loading } from "./common/loading/components/Loding";
 function App() {
   const [pagestatus, setStatus] = useState(false);
   const [nodedata, setNodedata] = useState([]);

@@ -1,56 +1,7 @@
 import { useState, useEffect } from "react";
 
-const ClickAfter = ({
-  allview,
-  setAllview,
-  setScaleStatus,
-  nodedata,
-  clickNode,
-  setClickNode,
-  yearsnext,
-  monthsnext,
-  stop,
-  setStop,
-  years,
-  months,
-  setYearsnext,
-  setMonthsnext,
-  setSelect,
-}) => {
+const ClickAfter = ({ clickNode, setClickNode }) => {
   const [translatedTags, setTranslatedTags] = useState([]); // 翻訳されたタグを保持
-
-  // 非同期処理を行う関数
-  async function trans(node) {
-    if (clickNode != null) {
-      node = node.replace(/<[^>]*>/g, ""); // HTMLタグを削除
-      console.log(node);
-      try {
-        const response = await fetch(
-          `https://script.google.com/macros/s/AKfycbxwZewBANl5EuM-pnpbTgMwGryNhDapa3aTYCtBSFf5XIOVzgPmSTTxkiw8bj2fChl-AA/exec?text=${node}&source=en&target=ja`
-        );
-        const feachData = await response.json();
-        return feachData.text; // 翻訳されたテキストを返す
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        return ""; // エラーが発生した場合は空文字を返す
-      }
-    }
-    return ""; // clickNode が null の場合は空文字を返す
-  }
-
-  // useEffect(() => {
-  //   // clickNode が存在する場合にタグを翻訳
-  //   if (clickNode != null && clickNode.tag.length > 0) {
-  //     const translateTags = async () => {
-  //       const translated = await Promise.all(
-  //         clickNode.tag.map((node) => trans(node.name))
-  //       );
-  //       setTranslatedTags(translated); // 翻訳されたタグを状態に保存
-  //     };
-  //     translateTags();
-  //   }
-  // }, [clickNode]); // clickNode が変更されるたびに実行される
-
   return (
     <div className="click_After">
       {clickNode == null ? (

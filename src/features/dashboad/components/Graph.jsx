@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-import MiniGraph from "./MiniGraph";
-import { Loading } from "./Loding";
+import MiniGraph from "../../tools/MiniGraph";
+import { Loading } from "../../../common/loading/components/Loding";
 const Graph = ({
   scaleStatus,
   nodedata,
