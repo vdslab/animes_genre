@@ -19,6 +19,7 @@ const MiniGraph = ({
   zoomRef,
   status,
   yearsanime,
+  canvasmain,
 }) => {
   const nodes = nodedata;
 
@@ -31,19 +32,17 @@ const MiniGraph = ({
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    console.log(x, y);
 
     const newStartXY = {
-      k: startXY.k,
-      x: -(x - 300 / zoomLevel / 2) * zoomLevel * 4,
-      y: -(y - 300 / zoomLevel / 2) * zoomLevel * 4,
+      k: zoomLevel,
+      x: -(x - 50 / 2) * zoomLevel * 4 + 1200 / zoomLevel,
+      y: -(y - 50 / 2) * zoomLevel * 4 + 1200 / zoomLevel,
     };
     const newTransform = d3.zoomIdentity
       .translate(newStartXY.x, newStartXY.y)
       .scale(zoomLevel);
-    d3.select(canvasmain)
-      .transition()
-      .duration(750)
-      .call(zoomRef.current.transform, newTransform);
+    d3.select(canvasmain).call(zoomRef.current.transform, newTransform);
 
     setStartXY(newStartXY);
   };

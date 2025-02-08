@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-import MiniGraph from "../../tools/MiniGraph";
-import { Loading } from "../../../common/loading/components/Loding";
+import MiniGraph from "./MiniGraph";
+import Select from "react-select";
+import { Loading } from "../../../common/components/Loding";
 const Graph = ({
   scaleStatus,
   nodedata,
@@ -17,6 +18,8 @@ const Graph = ({
   clickNode,
   canvasRef,
   yearsanime,
+  setYearsanime,
+  years,
 }) => {
   const [mouseXY, setMouseXY] = useState({ x: 0, y: 0 });
   const [updateNodeData, setUpdateNodeData] = useState([]);
@@ -29,13 +32,20 @@ const Graph = ({
 
   const handleMouseMove = (e) => {
     const canvasElement = canvasRef.current;
-    if (!canvasElement || updateNodeData.length == 0) return; // canvasがnullの場合は何もしない
+    if (!canvasElement || updateNodeData.length === 0) return;
 
     const rect = canvasElement.getBoundingClientRect(); // キャンバスの位置とサイズを取得
-    const x = (e.clientX - rect.left - transform.x) / transform.k; // 現在の変換を考慮したX座標
-    const y = (e.clientY - rect.top - transform.y) / transform.k; // 現在の変換を考慮したY座標
+
+    // スケール補正（実際のキャンバスのサイズに正規化）
+    const scaleX = canvasElement.width / rect.width;
+    const scaleY = canvasElement.height / rect.height;
+
+    // CSSスケールを考慮したマウス位置を取得
+    const x = ((e.clientX - rect.left) * scaleX - transform.x) / transform.k;
+    const y = ((e.clientY - rect.top) * scaleY - transform.y) / transform.k;
+
     setMouseXY({ x: e.clientX, y: e.clientY });
-    // クリックされたノードを見つける
+
     const hoverNode = nodedata.find((node, index) => {
       const nodeX = node.x;
       const nodeY = node.y;
@@ -48,8 +58,10 @@ const Graph = ({
       );
       return distance <= radius;
     });
+
     setHovrsNode(hoverNode);
   };
+
   const handleToolClick = (order) => {
     const canvasElement = canvasRef.current;
     if (!canvasElement) return; // canvasがnullの場合は何もしない
@@ -71,7 +83,7 @@ const Graph = ({
       newTransform = d3.zoomIdentity.translate(0, 0).scale(1);
     } else if (order === "minus" && currentTransform.k > 0.5) {
       // "minus"ボタンの場合、ズームアウト（中心を基準に）
-      const scaleDelta = currentTransform.k - 0.5;
+      const scaleDelta = currentTransform.k * 0.5;
       newTransform = d3.zoomIdentity
         .translate(
           centerX -
@@ -79,10 +91,10 @@ const Graph = ({
           centerY -
             ((centerY - currentTransform.y) * scaleDelta) / currentTransform.k
         )
-        .scale(currentTransform.k - 0.5);
-    } else if (order === "plus" && currentTransform.k < 10) {
+        .scale(currentTransform.k * 0.5);
+    } else if (order === "plus" && currentTransform.k < 50) {
       // "plus"ボタンの場合、ズームイン（中心を基準に）
-      const scaleDelta = currentTransform.k + 0.5;
+      const scaleDelta = currentTransform.k * 1.5;
       newTransform = d3.zoomIdentity
         .translate(
           centerX -
@@ -90,7 +102,7 @@ const Graph = ({
           centerY -
             ((centerY - currentTransform.y) * scaleDelta) / currentTransform.k
         )
-        .scale(currentTransform.k + 0.5);
+        .scale(currentTransform.k * 1.5);
     }
 
     if (newTransform) {
@@ -108,9 +120,14 @@ const Graph = ({
     const canvasElement = canvasRef.current;
     if (!canvasElement || updateNodeData.length == 0) return; // canvasがnullの場合は何もしない
     const rect = canvasElement.getBoundingClientRect(); // キャンバスの位置とサイズを取得
-    const x = (e.clientX - rect.left - transform.x) / transform.k; // 現在の変換を考慮したX座標
-    const y = (e.clientY - rect.top - transform.y) / transform.k; // 現在の変換を考慮したY座標
+    // スケール補正（実際のキャンバスのサイズに正規化）
+    const scaleX = canvasElement.width / rect.width;
+    const scaleY = canvasElement.height / rect.height;
 
+    // CSSスケールを考慮したマウス位置を取得
+    const x = ((e.clientX - rect.left) * scaleX - transform.x) / transform.k;
+    const y = ((e.clientY - rect.top) * scaleY - transform.y) / transform.k;
+    console.log(e.clientX - rect.left, e.clientY - rect.top);
     // クリックされたノードを見つける
     const clickedNode = nodedata.find((node, index) => {
       const nodeX = node.x;
@@ -131,10 +148,10 @@ const Graph = ({
       // ノードを中心にズームするための新しい変換を作成
       const newTransform = d3.zoomIdentity
         .translate(
-          canvasElement.width / 2 - clickedNode.x * 10,
-          canvasElement.height / 2 - clickedNode.y * 10
+          canvasElement.width / 2 - clickedNode.x * 30,
+          canvasElement.height / 2 - clickedNode.y * 30
         )
-        .scale(10);
+        .scale(30);
       d3.select(canvasElement)
         .transition()
         .duration(750)
@@ -167,10 +184,9 @@ const Graph = ({
   useEffect(() => {
     if (scaleStatus && nodedata.length > 0) {
       const canvas = canvasRef.current;
-      console.log("動いてますか？");
       const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      const width = canvas.width;
+      const height = canvas.height;
 
       // D3 Force Simulation
       const simulation = d3
@@ -203,7 +219,6 @@ const Graph = ({
         nodedata.forEach((node, index) => {
           const x = node.x; // シミュレーションで決定されたx座標
           const y = node.y; // シミュレーションで決定されたy座標
-
           const radius = allview
             ? nodeScale(alldata[index][select])
             : nodeScale(node[select][yearsnext][monthsnext]);
@@ -237,8 +252,8 @@ const Graph = ({
     ) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d"); // 2D描画コンテキスト
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      const width = canvas.width;
+      const height = canvas.height;
       // Canvasをクリア
       ctx.clearRect(0, 0, width, height);
 
@@ -254,7 +269,7 @@ const Graph = ({
           const radius = allview
             ? nodeScale(alldata[index][select])
             : nodeScale(node[select][yearsnext][monthsnext]);
-          if (transform.k <= 6) {
+          if (transform.k <= 3) {
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, Math.PI * 2);
             let color = null;
@@ -316,7 +331,6 @@ const Graph = ({
       });
 
       ctx.restore(); // 変換をリセット
-      setUpdateNodeData(nodedata);
     }
   }, [
     scaleStatus,
@@ -336,7 +350,7 @@ const Graph = ({
     // ズームの動作を定義
     const zoom = d3
       .zoom()
-      .scaleExtent([0.5, 10]) // ズームの範囲を定義
+      .scaleExtent([0.5, 50]) // ズームの範囲を定義
       .on("zoom", (event) => {
         setTransform(event.transform); // 変換状態を更新
       });
@@ -352,7 +366,7 @@ const Graph = ({
       <div className="tool">
         <button
           onClick={() => handleToolClick("plus")}
-          style={transform.k == 10 ? { opacity: 0.5 } : { opacity: 1 }}
+          style={transform.k > 50 ? { opacity: 0.5 } : { opacity: 1 }}
         >
           ＋
         </button>
@@ -363,6 +377,58 @@ const Graph = ({
           ー
         </button>
         <button onClick={() => handleToolClick("all")}>初期</button>
+        <Select
+          options={nodedata}
+          value={clickNode}
+          getOptionLabel={(option) => option.animename || "Unknown Anime"}
+          onChange={(option) => {
+            if (nodedata.length != 0) {
+              setClickNode(option);
+              // 選択されたノードを中心にズーム
+              if (zoomRef.current) {
+                const canvas = canvasRef.current;
+                const newTransform = d3.zoomIdentity
+                  .translate(
+                    canvas.width / 2 - option.x * 10,
+                    canvas.height / 2 - option.y * 10
+                  )
+                  .scale(10);
+                d3.select(canvas)
+                  .transition()
+                  .duration(750)
+                  .call(zoomRef.current.transform, newTransform);
+              }
+            }
+          }}
+          placeholder="アニメを検索..."
+          filterOption={(option, inputValue) => {
+            if (nodedata.length != 0) {
+              const animename = (option.data.animename || "")
+                .toLowerCase()
+                .includes(inputValue.toLowerCase());
+              const anime_shortname = Array.isArray(option.data.shortname)
+                ? option.data.shortname.some((item) =>
+                    item.toLowerCase().includes(inputValue.toLowerCase())
+                  )
+                : (option.data.shortname || "")
+                    .toLowerCase()
+                    .includes(inputValue.toLowerCase());
+              return animename || anime_shortname;
+            }
+          }}
+        />
+        <Select
+          options={
+            years.map((year) => ({ value: year, label: `${year}年` })) // 数字を文字列に変換してlabelにセット
+          }
+          value={
+            yearsanime ? { value: yearsanime, label: `${yearsanime}年` } : null
+          } // 数字を文字列に変換してvalueにセット
+          getOptionLabel={(option) => option.label} // オプションラベルの取得
+          onChange={(option) => setYearsanime(option ? option.value : null)} // 選択された値をセット
+          placeholder="アニメの放送時期を選んでください" // プレースホルダ
+          isClearable
+        />
         <MiniGraph
           zoomscale={zoomscale}
           nodedata={updateNodeData}
@@ -381,12 +447,43 @@ const Graph = ({
           zoomRef={zoomRef}
           status={status}
           yearsanime={yearsanime}
+          canvasmain={canvasRef}
+        />
+        <input
+          type="range"
+          min={0.5}
+          max={50}
+          value={transform.k}
+          onChange={(e) => {
+            const canvasElement = canvasRef.current;
+            const newTransform = d3.zoomIdentity
+              .translate(
+                canvasElement.width / 2 -
+                  ((canvasElement.width / 2 - transform.x) * e.target.value) /
+                    transform.k,
+                canvasElement.height / 2 -
+                  ((canvasElement.height / 2 - transform.y) * e.target.value) /
+                    transform.k
+              )
+              .scale(e.target.value);
+            d3.select(canvasElement).call(
+              zoomRef.current.transform,
+              newTransform
+            );
+          }}
+          style={{
+            width: "300px",
+            display: "block",
+            margin: "0 auto",
+          }}
         />
       </div>
 
       <canvas
         ref={canvasRef}
         id="Canvas"
+        width={1200}
+        height={1200}
         style={
           hoversNode != null
             ? {

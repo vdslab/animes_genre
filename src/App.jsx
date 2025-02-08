@@ -3,8 +3,7 @@ import * as d3 from "d3";
 import Graph from "./features/dashboad/components/Graph";
 import ClickAfter from "./pages/components/ClickAfter";
 import "../app.css";
-import Select from "react-select";
-import { Loading } from "./common/loading/components/Loding";
+import { Loading } from "./common/components/Loding";
 function App() {
   const [pagestatus, setStatus] = useState(false);
   const [nodedata, setNodedata] = useState([]);
@@ -162,47 +161,6 @@ function App() {
       <header>
         <h2>アニメ探索マップ</h2>
 
-        <Select
-          options={nodedata}
-          value={clickNode}
-          getOptionLabel={(option) => option.animename || "Unknown Anime"}
-          onChange={(option) => {
-            if (nodedata.length != 0) {
-              setClickNode(option);
-              // 選択されたノードを中心にズーム
-              if (zoomRef.current) {
-                const canvas = canvasRef.current;
-                const newTransform = d3.zoomIdentity
-                  .translate(
-                    canvas.width / 2 - option.x * 10,
-                    canvas.height / 2 - option.y * 10
-                  )
-                  .scale(10);
-                d3.select(canvas)
-                  .transition()
-                  .duration(750)
-                  .call(zoomRef.current.transform, newTransform);
-              }
-            }
-          }}
-          placeholder="アニメを検索..."
-          filterOption={(option, inputValue) => {
-            if (nodedata.length != 0) {
-              const animename = (option.data.animename || "")
-                .toLowerCase()
-                .includes(inputValue.toLowerCase());
-              const anime_shortname = Array.isArray(option.data.shortname)
-                ? option.data.shortname.some((item) =>
-                    item.toLowerCase().includes(inputValue.toLowerCase())
-                  )
-                : (option.data.shortname || "")
-                    .toLowerCase()
-                    .includes(inputValue.toLowerCase());
-              return animename || anime_shortname;
-            }
-          }}
-        />
-
         {/* <button
               onClick={() => {
                 setScaleStatus(false);
@@ -243,19 +201,6 @@ function App() {
             />
           </div>
         )} */}
-
-        <Select
-          options={
-            years.map((year) => ({ value: year, label: `${year}年` })) // 数字を文字列に変換してlabelにセット
-          }
-          value={
-            yearsanime ? { value: yearsanime, label: `${yearsanime}年` } : null
-          } // 数字を文字列に変換してvalueにセット
-          getOptionLabel={(option) => option.label} // オプションラベルの取得
-          onChange={(option) => setYearsanime(option ? option.value : null)} // 選択された値をセット
-          placeholder="アニメの放送時期を選んでください" // プレースホルダ
-          isClearable
-        />
       </header>
 
       {pagestatus ? (
@@ -276,6 +221,8 @@ function App() {
             clickNode={clickNode}
             canvasRef={canvasRef}
             yearsanime={yearsanime}
+            setYearsanime={setYearsanime}
+            years={years}
           />
           <ClickAfter
             allview={allview}

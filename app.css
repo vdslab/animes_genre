@@ -47,8 +47,8 @@ header {
 
 .graph {
   border: 1px solid #ccc; /* グラフの枠線 */
-  width: 100%;
-  height: 100%;
+  height: calc(100% - 25px);
+  aspect-ratio: 1 / 1;
   border-radius: 5px; /* 角を丸くする */
   padding: 10px; /* グラフ内部のスペース */
   background-color: #f9f9f9; /* 背景色 */
@@ -75,8 +75,9 @@ h1 {
 }
 
 .click_After {
-  width: 30%; /* 幅を指定しておくと、中央配置がより安定します */
-  height: calc(100% - 4px);
+  width: calc(40%); /* 幅を指定しておくと、中央配置がより安定します */
+  height: calc(100% - 24px);
+  padding: 10px;
   border: 2px solid #ccc;
   border-radius: 10px; /* 角を丸く */
   background-color: #f9f9f9; /* 背景色 */
