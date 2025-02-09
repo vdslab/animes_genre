@@ -12,6 +12,10 @@
   position: fixed; /* 画面の固定位置 */
   bottom: 0px; /* 下端からの距離 */
   left: 0px; /* 左端からの距離 */
+  width: 20%;
+}
+.tool select {
+  width: 300px;
 }
 header {
   height: 7%;

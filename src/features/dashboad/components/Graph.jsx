@@ -359,7 +359,7 @@ const Graph = ({
 
     // ズームの動作をキャンバスに適用
     d3.select(canvas).call(zoom);
-  }, []);
+  }, [transform]);
 
   return (
     <div className="graph">
@@ -389,10 +389,10 @@ const Graph = ({
                 const canvas = canvasRef.current;
                 const newTransform = d3.zoomIdentity
                   .translate(
-                    canvas.width / 2 - option.x * 10,
-                    canvas.height / 2 - option.y * 10
+                    canvas.width / 2 - option.x * 30,
+                    canvas.height / 2 - option.y * 30
                   )
-                  .scale(10);
+                  .scale(30);
                 d3.select(canvas)
                   .transition()
                   .duration(750)
@@ -428,6 +428,7 @@ const Graph = ({
           onChange={(option) => setYearsanime(option ? option.value : null)} // 選択された値をセット
           placeholder="アニメの放送時期を選んでください" // プレースホルダ
           isClearable
+          styles={{ width: "100%" }}
         />
         <MiniGraph
           zoomscale={zoomscale}

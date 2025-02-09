@@ -35,9 +35,9 @@ const MiniGraph = ({
     console.log(x, y);
 
     const newStartXY = {
-      k: zoomLevel,
-      x: -(x - 50 / 2) * zoomLevel * 4 + 1200 / zoomLevel,
-      y: -(y - 50 / 2) * zoomLevel * 4 + 1200 / zoomLevel,
+      k: startXY.k,
+      x: -(x - 300 / zoomLevel / 2) * zoomLevel * 4,
+      y: -(y - 300 / zoomLevel / 2) * zoomLevel * 4,
     };
     const newTransform = d3.zoomIdentity
       .translate(newStartXY.x, newStartXY.y)
